@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Atlas Tourism - Full-Stack Travel Booking Website
 **MCA 2nd Semester Project Documentation**
 
@@ -278,3 +279,6 @@ The database comes pre-seeded with accounts for immediate testing:
 
 **Developed for MCA 2nd Semester Project**  
 *Atlas Tourism — Discover Your Next Adventure*
+=======
+# Atlas_tourism
+>>>>>>> 1f27a6ebccb3fb7a27ea924eeaccc75acad1fea4
