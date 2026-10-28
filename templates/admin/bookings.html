@@ -1,0 +1,103 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Manage Bookings - Atlas Admin{% endblock %}
+{% block page_heading %}Customer Booking Orders{% endblock %}
+
+{% block admin_content %}
+<div class="card card-custom p-4 bg-white">
+    <div class="row g-3 align-items-center justify-content-between mb-4">
+        <div class="col-md-5">
+            <h5 class="fw-bold mb-0">Bookings List ({{ bookings|length }})</h5>
+            <span class="text-muted small">Filter by status or search by booking reference, traveller name, or package.</span>
+        </div>
+        <div class="col-md-7">
+            <form method="GET" action="{{ url_for('admin.bookings') }}" class="row g-2">
+                <div class="col-sm-5">
+                    <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">All Statuses</option>
+                        <option value="Pending" {% if current_filter == 'Pending' %}selected{% endif %}>Pending</option>
+                        <option value="Confirmed" {% if current_filter == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                        <option value="Completed" {% if current_filter == 'Completed' %}selected{% endif %}>Completed</option>
+                        <option value="Cancelled" {% if current_filter == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-sm-7">
+                    <div class="input-group input-group-sm">
+                        <input type="text" name="search" class="form-control" placeholder="Search customer or ref #" value="{{ search or '' }}">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle small">
+            <thead class="table-light">
+                <tr>
+                    <th>Ref Number</th>
+                    <th>Customer / Email</th>
+                    <th>Package & Dest</th>
+                    <th>Travel Date</th>
+                    <th>Party</th>
+                    <th>Total Fare</th>
+                    <th>Status</th>
+                    <th>Update Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td class="fw-bold">{{ b.booking_number }}</td>
+                    <td>
+                        <span class="fw-semibold text-dark d-block">{{ b.user_full_name }}</span>
+                        <span class="text-muted" style="font-size: 0.75rem;">{{ b.user_email }}</span>
+                    </td>
+                    <td>
+                        <span class="fw-semibold text-dark">{{ b.package_name }}</span>
+                        <span class="text-muted d-block" style="font-size: 0.75rem;">{{ b.destination_name }}</span>
+                    </td>
+                    <td>{{ b.travel_date }}</td>
+                    <td>{{ b.adults_count }}A {% if b.children_count %}+ {{ b.children_count }}C{% endif %}</td>
+                    <td class="fw-bold text-primary-custom">₹{{ "{:,.2f}".format(b.total_amount) }}</td>
+                    <td>
+                        {% if b.booking_status == 'Confirmed' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">Confirmed</span>
+                        {% elif b.booking_status == 'Completed' %}
+                            <span class="badge bg-info-subtle text-info border border-info-subtle">Completed</span>
+                        {% elif b.booking_status == 'Cancelled' %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Cancelled</span>
+                        {% else %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Pending</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{{ url_for('admin.update_booking_status', booking_id=b.id) }}" method="POST" class="d-inline-flex gap-1 align-items-center">
+                            <select name="status" class="form-select form-select-sm" style="width: 120px;">
+                                <option value="Pending" {% if b.booking_status == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="Confirmed" {% if b.booking_status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                <option value="Completed" {% if b.booking_status == 'Completed' %}selected{% endif %}>Completed</option>
+                                <option value="Cancelled" {% if b.booking_status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-primary py-1 px-2" title="Save Status">
+                                <i class="bi bi-check-lg"></i>
+                            </button>
+                        </form>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('user.booking_details', booking_id=b.id) }}" class="btn btn-sm btn-light py-1 px-2 text-primary" target="_blank" title="View Full Booking">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">No bookings found matching filters.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

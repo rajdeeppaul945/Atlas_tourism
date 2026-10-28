@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us - Atlas Tourism{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-white border-bottom">
+    <div class="container py-3 text-center">
+        <span class="sub-badge"><i class="bi bi-chat-dots-fill me-1"></i> Get In Touch</span>
+        <h1 class="fw-bold mt-2">We’d Love to Hear From You</h1>
+        <p class="text-muted mx-auto" style="max-width: 650px;">
+            Have questions about a holiday package or want a customized travel plan? Reach out and our team will get back within 24 hours.
+        </p>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Contact Form -->
+            <div class="col-lg-7">
+                <div class="card card-custom p-4 p-md-5">
+                    <h3 class="fw-bold mb-3">Send Us a Message</h3>
+                    <p class="text-muted small mb-4">Fill out the form below and an Atlas travel consultant will connect with you.</p>
+
+                    <form method="POST" action="{{ url_for('contact.contact') }}" id="contactForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="name" class="form-label fw-semibold small">Your Name *</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{ form_data.get('name', '') }}" placeholder="e.g. Ananya Das" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="email" class="form-label fw-semibold small">Your Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="{{ form_data.get('email', '') }}" placeholder="name@example.com" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label fw-semibold small">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="{{ form_data.get('phone', '') }}" placeholder="+91 98765 43210">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="subject" class="form-label fw-semibold small">Subject *</label>
+                                <input type="text" class="form-control" id="subject" name="subject" 
+                                       value="{{ form_data.get('subject', '') }}" placeholder="Inquiry about Andaman Package" required>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="message" class="form-label fw-semibold small">Message *</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" 
+                                          placeholder="Share your travel dates, group size, and any special preferences..." required>{{ form_data.get('message', '') }}</textarea>
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold">
+                                    Send Message <i class="bi bi-send ms-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Contact Information Cards -->
+            <div class="col-lg-5">
+                <div class="card card-custom p-4 mb-4 bg-primary-custom text-white border-0">
+                    <h4 class="fw-bold mb-3">Atlas Tourism Headquarters</h4>
+                    <p class="small opacity-90 mb-4">
+                        Visit our central travel lounge in Dhubri, Assam for face-to-face itinerary curation and customized corporate bookings.
+                    </p>
+                    
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <i class="bi bi-geo-alt-fill fs-4 mt-1"></i>
+                        <div>
+                            <span class="d-block fw-semibold">Office Address:</span>
+                            <span class="small opacity-90">Atlas Tourism,First Floor, Paul Complex opposite of SBI Bank Dhubri Branch,Dhubri, Assam, Pin - 783324 </span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <i class="bi bi-telephone-fill fs-4 mt-1"></i>
+                        <div>
+                            <span class="d-block fw-semibold">Helpline Numbers:</span>
+                            <span class="small opacity-90">+91 6901850476 / (033) 2450-8900</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3 mb-3">
+                        <i class="bi bi-envelope-fill fs-4 mt-1"></i>
+                        <div>
+                            <span class="d-block fw-semibold">Email Inquiries:</span>
+                            <span class="small opacity-90">infoatlastourism000@gmail.com</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start gap-3">
+                        <i class="bi bi-clock-fill fs-4 mt-1"></i>
+                        <div>
+                            <span class="d-block fw-semibold">Working Hours:</span>
+                            <span class="small opacity-90">Monday – Saturday: 9:00 AM – 8:00 PM<br>Sunday: 10:00 AM – 4:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Emergency Travel Support Card -->
+                <div class="card card-custom p-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rounded-circle bg-warning p-3 text-dark fs-4">
+                            <i class="bi bi-headset"></i>
+                        </div>
+                        <div>
+                            <h5 class="fw-bold mb-1">24/7 On-Trip Assistance</h5>
+                            <p class="text-muted small mb-0">Already on a tour? Our on-ground support desk is available around the clock.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("contactForm");
+    if (form) {
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+            const subject = document.getElementById("subject").value;
+            const message = document.getElementById("message").value;
+
+            const body = `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\n\nMessage:\n${message}`;
+            
+            // 1. Open WhatsApp in new tab
+            const waUrl = `https://wa.me/916901850476?text=${encodeURIComponent(body)}`;
+            window.open(waUrl, "_blank");
+            
+            // 2. Open Email client
+            const mailtoUrl = `mailto:infoatlastourism000@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoUrl;
+
+            // 3. Submit form to backend
+            setTimeout(() => {
+                form.submit();
+            }, 800);
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+
+{% block title %}User Dashboard - Atlas Tourism{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-3">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            {% with active_page='dashboard' %}
+                {% include 'user/_sidebar.html' %}
+            {% endwith %}
+        </div>
+
+        <!-- Dashboard Main Content -->
+        <div class="col-lg-9">
+            <!-- Header Welcome Banner -->
+            <div class="card card-custom p-4 mb-3 bg-white">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div>
+                        <span class="text-muted small">Traveller Overview</span>
+                        <h3 class="fw-bold mb-0">Hello, {{ user.full_name }}! 👋</h3>
+                    </div>
+                    <a href="{{ url_for('packages.index') }}" class="btn btn-accent">
+                        <i class="bi bi-compass me-1"></i> Plan a New Trip
+                    </a>
+                </div>
+            </div>
+
+            <!-- Metric Cards -->
+            <div class="row g-3 mb-3">
+                <div class="col-sm-6 col-xl-3">
+                    <div class="metric-card">
+                        <div class="metric-icon bg-primary-light text-primary-custom">
+                            <i class="bi bi-suitcase-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0">{{ counts.total_bookings }}</h4>
+                            <span class="text-muted small">Total Bookings</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-3">
+                    <div class="metric-card">
+                        <div class="metric-icon bg-info-subtle text-info">
+                            <i class="bi bi-airplane-engines"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0">{{ counts.upcoming_trips }}</h4>
+                            <span class="text-muted small">Upcoming Trips</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-3">
+                    <div class="metric-card">
+                        <div class="metric-icon bg-success-subtle text-success">
+                            <i class="bi bi-check2-circle"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0">{{ counts.completed_trips }}</h4>
+                            <span class="text-muted small">Completed Trips</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-3">
+                    <div class="metric-card">
+                        <div class="metric-icon bg-danger-subtle text-danger">
+                            <i class="bi bi-heart"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0">{{ counts.wishlist_count }}</h4>
+                            <span class="text-muted small">Wishlist Items</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Trips Highlight -->
+            {% if upcoming_bookings %}
+            <div class="card card-custom p-4 mb-3 border-start border-4 border-primary">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0 text-primary-custom">
+                        <i class="bi bi-calendar-check me-2"></i> Next Upcoming Adventure
+                    </h5>
+                    <span class="badge bg-success">Confirmed</span>
+                </div>
+                {% set next_trip = upcoming_bookings[0] %}
+                <div class="row align-items-center g-3">
+                    <div class="col-md-3">
+                        <img src="{{ next_trip.package_image }}" alt="{{ next_trip.package_name }}" class="img-fluid rounded-3 object-fit-cover" style="height: 110px; width: 100%;">
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="fw-bold mb-1">{{ next_trip.package_name }}</h5>
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt-fill text-primary-custom me-1"></i> {{ next_trip.destination_name }} • 
+                            <i class="bi bi-calendar3 ms-2 me-1 text-primary-custom"></i> Departs: <strong>{{ next_trip.travel_date }}</strong>
+                        </p>
+                        <span class="badge bg-light text-dark border">Ref: {{ next_trip.booking_number }}</span>
+                    </div>
+                    <div class="col-md-3 text-md-end">
+                        <a href="{{ url_for('user.booking_details', booking_id=next_trip.id) }}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                            View Itinerary
+                        </a>
+                        <a href="{{ url_for('booking.confirmation', booking_id=next_trip.id) }}" class="btn btn-light btn-sm w-100 text-muted">
+                            <i class="bi bi-printer me-1"></i> Voucher
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Recent Bookings Table -->
+            <div class="card card-custom p-4 mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">Recent Bookings</h5>
+                    <a href="{{ url_for('user.bookings') }}" class="small text-primary-custom text-decoration-none">View All Bookings &rarr;</a>
+                </div>
+
+                {% if recent_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light small">
+                            <tr>
+                                <th>Booking Ref</th>
+                                <th>Tour Package</th>
+                                <th>Travel Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in recent_bookings %}
+                            <tr>
+                                <td class="fw-semibold small">{{ b.booking_number }}</td>
+                                <td>
+                                    <span class="fw-semibold text-dark d-block">{{ b.package_name }}</span>
+                                    <span class="text-muted small">{{ b.destination_name }}</span>
+                                </td>
+                                <td class="small">{{ b.travel_date }}</td>
+                                <td class="fw-bold text-primary-custom small">₹{{ "{:,.2f}".format(b.total_amount) }}</td>
+                                <td>
+                                    {% if b.booking_status == 'Confirmed' %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Confirmed</span>
+                                    {% elif b.booking_status == 'Completed' %}
+                                        <span class="badge bg-info-subtle text-info border border-info-subtle">Completed</span>
+                                    {% elif b.booking_status == 'Cancelled' %}
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Cancelled</span>
+                                    {% else %}
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('user.booking_details', booking_id=b.id) }}" class="btn btn-sm btn-light py-1 px-2 text-primary" title="Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4 text-muted">
+                    <i class="bi bi-journal-x fs-2 d-block mb-2"></i>
+                    <p class="mb-2">You haven't made any bookings yet.</p>
+                    <a href="{{ url_for('packages.index') }}" class="btn btn-sm btn-primary">Find Your Next Holiday</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Wishlist & Reviews Preview Columns -->
+            <div class="row g-3">
+                <!-- Wishlist Preview -->
+                <div class="col-md-6">
+                    <div class="card card-custom p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0"><i class="bi bi-heart text-danger me-2"></i> Saved Wishlist</h5>
+                            <a href="{{ url_for('user.wishlist') }}" class="small text-primary-custom text-decoration-none">View ({{ counts.wishlist_count }})</a>
+                        </div>
+                        {% if wishlist_items %}
+                            {% for item in wishlist_items %}
+                            <div class="d-flex align-items-center gap-3 py-2 border-bottom">
+                                <img src="{{ item.image_url }}" alt="{{ item.name }}" class="rounded-3 object-fit-cover flex-shrink-0" style="width: 54px; height: 54px;">
+                                <div class="flex-grow-1 overflow-hidden" style="min-width: 0;">
+                                    <h6 class="fw-bold mb-0 text-truncate">{{ item.name }}</h6>
+                                    <span class="small text-muted">₹{{ "{:,.0f}".format(item.price) }} / person</span>
+                                </div>
+                                <a href="{{ url_for('packages.details', package_id=item.id) }}" class="btn btn-sm btn-outline-primary text-nowrap px-3 py-1 flex-shrink-0 d-inline-flex align-items-center justify-content-center">
+                                    View
+                                </a>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted small py-3 mb-0">No packages in your wishlist yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Recent Reviews Preview -->
+                <div class="col-md-6">
+                    <div class="card card-custom p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="fw-bold mb-0"><i class="bi bi-star text-warning me-2"></i> My Reviews</h5>
+                            <a href="{{ url_for('user.reviews') }}" class="small text-primary-custom text-decoration-none">All Reviews</a>
+                        </div>
+                        {% if reviews %}
+                            {% for rev in reviews %}
+                            <div class="py-2 border-bottom">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="fw-semibold small text-dark">{{ rev.package_name }}</span>
+                                    <span class="text-warning small">★ {{ rev.rating }}/5</span>
+                                </div>
+                                <p class="text-muted small mb-0 text-truncate">"{{ rev.review_text }}"</p>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted small py-3 mb-0">You haven't submitted any reviews yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

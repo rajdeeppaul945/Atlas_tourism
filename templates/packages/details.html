@@ -1,0 +1,264 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ package.name }} - Atlas Tourism{% endblock %}
+
+{% block content %}
+<!-- Package Header Banner -->
+<section class="py-4 bg-white border-bottom">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2 small">
+                <li class="breadcrumb-item"><a href="{{ url_for('home.index') }}" class="text-decoration-none">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ url_for('packages.index') }}" class="text-decoration-none">Packages</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ package.name }}</li>
+            </ol>
+        </nav>
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="badge bg-light text-primary-custom border fw-semibold mb-1">
+                    <i class="bi bi-geo-alt-fill me-1"></i> {{ package.destination_name }}
+                </span>
+                <h1 class="fw-bold mb-1 fs-2">{{ package.name }}</h1>
+                <div class="d-flex align-items-center gap-3 small text-muted">
+                    <span><i class="bi bi-clock me-1 text-primary-custom"></i> {{ package.duration }}</span>
+                    <span>•</span>
+                    <div class="star-rating d-inline">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span class="text-dark fw-bold ms-1">{{ "%.1f"|format(package.avg_rating|float) }}</span>
+                        <span>({{ reviews|length }} reviews)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                {% if session.get('user_id') %}
+                <button class="btn btn-outline-danger btn-wishlist-toggle {% if in_wishlist %}active{% endif %}" data-package-id="{{ package.id }}">
+                    <i class="bi {% if in_wishlist %}bi-heart-fill{% else %}bi-heart{% endif %} me-1"></i> 
+                    <span class="d-none d-sm-inline">{% if in_wishlist %}Saved in Wishlist{% else %}Add to Wishlist{% endif %}</span>
+                </button>
+                {% endif %}
+                <a href="{{ url_for('booking.book', package_id=package.id) }}" class="btn btn-accent px-4 py-2 fw-semibold">
+                    <i class="bi bi-send-check me-1"></i> Book Tour Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Package Content & Booking Column -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Main Details & Itinerary Column -->
+            <div class="col-lg-8">
+                <!-- Large Image Preview -->
+                <div class="rounded-4 overflow-hidden mb-4 shadow-sm" style="max-height: 420px;">
+                    <img src="{{ package.image_url }}" alt="{{ package.name }}" class="w-100 h-100 object-fit-cover">
+                </div>
+
+                <!-- Key Amenities Row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-4">
+                        <div class="card p-3 border-0 bg-white shadow-sm rounded-3 h-100 text-center">
+                            <i class="bi bi-building text-primary-custom fs-3 mb-1"></i>
+                            <span class="small text-muted d-block">Accommodations</span>
+                            <span class="fw-semibold small text-dark">{{ package.hotel_info }}</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="card p-3 border-0 bg-white shadow-sm rounded-3 h-100 text-center">
+                            <i class="bi bi-car-front text-primary-custom fs-3 mb-1"></i>
+                            <span class="small text-muted d-block">Transport</span>
+                            <span class="fw-semibold small text-dark">{{ package.transport_info }}</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="card p-3 border-0 bg-white shadow-sm rounded-3 h-100 text-center">
+                            <i class="bi bi-cup-hot text-primary-custom fs-3 mb-1"></i>
+                            <span class="small text-muted d-block">Meals</span>
+                            <span class="fw-semibold small text-dark">{{ package.meals_info }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Package Overview -->
+                <div class="card card-custom p-4 p-md-5 mb-4">
+                    <h4 class="fw-bold mb-3">Holiday Package Overview</h4>
+                    <p class="text-muted" style="line-height: 1.9; font-size: 1.05rem;">
+                        {{ package.description }}
+                    </p>
+
+                    <div class="mt-4 p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+                        <i class="bi bi-calendar-check text-primary-custom fs-3"></i>
+                        <div>
+                            <span class="small text-muted d-block">Available Batch Departures:</span>
+                            <span class="fw-semibold text-dark">{{ package.available_dates }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Day-wise Itinerary -->
+                <div class="card card-custom p-4 p-md-5 mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <h4 class="fw-bold mb-0"><i class="bi bi-list-task text-primary-custom me-2"></i> Day-Wise Itinerary</h4>
+                        <span class="badge bg-light text-muted border">{{ itinerary|length }} Days Planned</span>
+                    </div>
+
+                    {% if itinerary %}
+                    <div class="itinerary-timeline">
+                        {% for item in itinerary %}
+                        <div class="d-flex mb-4 position-relative">
+                            <div class="me-3 text-center" style="min-width: 50px;">
+                                <div class="badge rounded-circle bg-primary-custom text-white d-inline-flex align-items-center justify-content-center fw-bold" style="width: 44px; height: 44px; font-size: 0.95rem;">
+                                    D{{ item.day_number }}
+                                </div>
+                            </div>
+                            <div class="flex-grow-1 card p-3 border-light bg-light rounded-3">
+                                <h5 class="fw-bold mb-1 text-dark">{{ item.title }}</h5>
+                                <p class="text-muted small mb-2" style="line-height: 1.7;">{{ item.description }}</p>
+                                {% if item.activities %}
+                                <div class="small text-secondary">
+                                    <i class="bi bi-pin-angle text-primary-custom me-1"></i> <strong>Key Highlights:</strong> {{ item.activities }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">Standard daily schedule will be shared upon customized booking.</p>
+                    {% endif %}
+                </div>
+
+                <!-- Inclusions & Exclusions -->
+                <div class="card card-custom p-4 p-md-5 mb-4">
+                    <h4 class="fw-bold mb-4">Inclusions & Exclusions</h4>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-success mb-3"><i class="bi bi-check-circle-fill me-2"></i> What's Included</h6>
+                            <ul class="list-unstyled small text-muted" style="line-height: 2;">
+                                {% for inc in package.inclusions.split(',') if package.inclusions %}
+                                    <li class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-check-lg text-success mt-1"></i>
+                                        <span>{{ inc.strip() }}</span>
+                                    </li>
+                                {% else %}
+                                    <li>Hotel accommodations as per category</li>
+                                    <li>Daily complimentary breakfast</li>
+                                    <li>All transfers and sightseeing by private cab</li>
+                                    <li>Driver allowances, toll tax, and parking</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-danger mb-3"><i class="bi bi-x-circle-fill me-2"></i> What's Not Included</h6>
+                            <ul class="list-unstyled small text-muted" style="line-height: 2;">
+                                {% for exc in package.exclusions.split(',') if package.exclusions %}
+                                    <li class="d-flex align-items-start gap-2">
+                                        <i class="bi bi-x-lg text-danger mt-1"></i>
+                                        <span>{{ exc.strip() }}</span>
+                                    </li>
+                                {% else %}
+                                    <li>Airfare / Train tickets</li>
+                                    <li>Personal expenses, laundry, and telephone calls</li>
+                                    <li>Entry fees to monuments unless stated</li>
+                                    <li>Travel insurance coverage</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verified Reviews -->
+                <div class="card card-custom p-4 p-md-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">Traveller Reviews</h4>
+                        <div class="star-rating">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <span class="text-dark fw-bold ms-1">{{ "%.1f"|format(package.avg_rating|float) }} / 5.0</span>
+                        </div>
+                    </div>
+
+                    {% if reviews %}
+                        {% for r in reviews %}
+                        <div class="border-bottom py-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-primary-light text-primary-custom fw-bold d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                        {{ r.user_name[:1] }}
+                                    </div>
+                                    <span class="fw-semibold text-dark">{{ r.user_name }}</span>
+                                </div>
+                                <div class="star-rating small">
+                                    {% for s in range(r.rating) %}
+                                        <i class="bi bi-star-fill text-warning"></i>
+                                    {% endfor %}
+                                    {% for s in range(5 - r.rating) %}
+                                        <i class="bi bi-star text-muted"></i>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <p class="text-muted small mb-1" style="line-height: 1.7;">
+                                "{{ r.review_text }}"
+                            </p>
+                            <span class="text-muted" style="font-size: 0.75rem;">Verified Traveller • {{ r.created_at.strftime('%b %d, %Y') if r.created_at else '' }}</span>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted small mb-0">No approved reviews yet for this package. Be the first to book and write a review!</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Sticky Booking Card Column -->
+            <div class="col-lg-4">
+                <div class="card card-custom p-4 sticky-top shadow-lg" style="top: 100px; z-index: 10;">
+                    <span class="badge bg-light text-success border align-self-start fw-semibold mb-2">
+                        <i class="bi bi-shield-check"></i> Best Price Guarantee
+                    </span>
+                    <div class="mb-3">
+                        <span class="text-muted small d-block">Package Price starting at:</span>
+                        <div class="d-flex align-items-baseline gap-2">
+                            <h2 class="fw-bold text-primary-custom mb-0">₹{{ "{:,.0f}".format(package.price) }}</h2>
+                            <span class="text-muted small">/ adult</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-light p-3 rounded-3 mb-4 small text-muted">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="bi bi-clock me-1 text-primary-custom"></i> Duration:</span>
+                            <span class="fw-bold text-dark">{{ package.duration }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span><i class="bi bi-geo-alt me-1 text-primary-custom"></i> Destination:</span>
+                            <span class="fw-bold text-dark">{{ package.destination_name }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span><i class="bi bi-calendar-event me-1 text-primary-custom"></i> Departures:</span>
+                            <span class="fw-bold text-dark">{{ package.available_dates[:18] }}...</span>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('booking.book', package_id=package.id) }}" class="btn btn-accent py-3 fw-bold fs-6 shadow">
+                            <i class="bi bi-send-check me-1"></i> Proceed to Book
+                        </a>
+                        {% if session.get('user_id') %}
+                        <button class="btn btn-outline-danger py-2 btn-wishlist-toggle {% if in_wishlist %}active{% endif %}" data-package-id="{{ package.id }}">
+                            <i class="bi {% if in_wishlist %}bi-heart-fill{% else %}bi-heart{% endif %} me-1"></i> 
+                            {% if in_wishlist %}In Your Wishlist{% else %}Save to Wishlist{% endif %}
+                        </button>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top text-center">
+                        <span class="small text-muted d-block mb-1">Need customized dates or group rates?</span>
+                        <a href="{{ url_for('contact.contact') }}" class="small fw-semibold text-primary-custom text-decoration-none">
+                            <i class="bi bi-telephone me-1"></i> Talk to our Destination Expert
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

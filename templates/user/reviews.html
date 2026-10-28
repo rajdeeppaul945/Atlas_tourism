@@ -1,0 +1,275 @@
+{% extends 'base.html' %}
+
+{% block title %}My Reviews & Feedback - Atlas Tourism{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row g-4">
+        <!-- Sidebar Navigation -->
+        <div class="col-lg-3">
+            {% with active_page='reviews' %}
+                {% include 'user/_sidebar.html' %}
+            {% endwith %}
+        </div>
+
+        <!-- Reviews Content -->
+        <div class="col-lg-9">
+            <!-- Review Submission Card -->
+            <div class="card card-custom p-4 p-md-4 mb-4 border-0 shadow-sm">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h4 class="fw-bold mb-0 text-dark"><i class="bi bi-pencil-square text-primary-custom me-2"></i> Write a Tour Review</h4>
+                    <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-1 rounded-pill small">
+                        <i class="bi bi-lightning-charge-fill me-1"></i> Instant Publishing
+                    </span>
+                </div>
+                <p class="text-muted small mb-4">Share your genuine travel experience, rate your tour, and help other travellers plan their dream holiday.</p>
+
+                <form method="POST" action="{{ url_for('user.reviews') }}" id="review-form">
+                    <div class="row g-3">
+                        <!-- Select Package -->
+                        <div class="col-md-7">
+                            <label class="form-label fw-semibold small text-dark">Select Tour Package <span class="text-danger">*</span></label>
+                            <select name="package_id" id="review-package-select" class="form-select shadow-sm" required>
+                                <option value="">-- Choose a Tour Package --</option>
+                                {% if user_bookings %}
+                                <optgroup label="✈️ My Booked Holidays">
+                                    {% for b in user_bookings %}
+                                        <option value="{{ b.package_id }}" data-booking-id="{{ b.id }}">{{ b.package_name }} (Ref: {{ b.booking_number }} - {{ b.booking_status }})</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endif %}
+                                <optgroup label="🌟 All Tour Packages">
+                                    {% for p in all_packages %}
+                                        <option value="{{ p.id }}">{{ p.name }} (₹{{ "{:,.0f}".format(p.price) }})</option>
+                                    {% endfor %}
+                                </optgroup>
+                            </select>
+                            <input type="hidden" name="booking_id" id="review-booking-id" value="">
+                        </div>
+
+                        <!-- Interactive Star Rating -->
+                        <div class="col-md-5">
+                            <label class="form-label fw-semibold small text-dark d-block">Overall Rating <span class="text-danger">*</span></label>
+                            <div class="d-flex align-items-center flex-wrap gap-2 pt-1">
+                                <div class="star-rating-interactive" id="star-rating-box">
+                                    <i class="bi bi-star-fill star-item" data-value="1"></i>
+                                    <i class="bi bi-star-fill star-item" data-value="2"></i>
+                                    <i class="bi bi-star-fill star-item" data-value="3"></i>
+                                    <i class="bi bi-star-fill star-item" data-value="4"></i>
+                                    <i class="bi bi-star-fill star-item" data-value="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="review-rating-input" value="5">
+                                <span id="rating-desc-badge" class="badge bg-warning-subtle text-dark border px-2 py-1 small fw-semibold">
+                                    5.0 ★ Excellent
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Review Title / Headline -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Review Title / Headline <span class="text-muted fw-normal">(Optional)</span></label>
+                            <input type="text" name="review_title" class="form-control shadow-sm" placeholder="e.g. Breathtaking views, smooth travel, and luxurious hotel!">
+                        </div>
+
+                        <!-- Experience Highlights Tags -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark d-block mb-2">Trip Highlights & Amenities <span class="text-muted fw-normal">(Tap all that apply)</span></label>
+                            <div class="d-flex flex-wrap gap-2" id="experience-tags-container">
+                                <div class="experience-tag-pill" data-tag="🏨 Clean & Luxury Hotel">
+                                    <i class="bi bi-building"></i> Clean Hotel
+                                </div>
+                                <div class="experience-tag-pill" data-tag="🚗 Punctual & Friendly Driver">
+                                    <i class="bi bi-car-front"></i> Punctual Driver
+                                </div>
+                                <div class="experience-tag-pill" data-tag="🍛 Delicious Fresh Meals">
+                                    <i class="bi bi-cup-hot"></i> Great Food
+                                </div>
+                                <div class="experience-tag-pill" data-tag="🌄 Scenic Views & Photography">
+                                    <i class="bi bi-camera"></i> Scenic Views
+                                </div>
+                                <div class="experience-tag-pill" data-tag="👨‍👩‍👧 Family & Kid Friendly">
+                                    <i class="bi bi-people"></i> Family Friendly
+                                </div>
+                                <div class="experience-tag-pill" data-tag="💰 Great Value for Money">
+                                    <i class="bi bi-cash-coin"></i> Value for Money
+                                </div>
+                                <div class="experience-tag-pill" data-tag="⏰ Well Organized Schedule">
+                                    <i class="bi bi-clock-history"></i> Well Organized
+                                </div>
+                            </div>
+                            <div id="hidden-tags-container"></div>
+                        </div>
+
+                        <!-- Detailed Review Feedback -->
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label fw-semibold small text-dark mb-0">Your Detailed Review <span class="text-danger">*</span></label>
+                                <span class="text-muted small" id="review-char-count" style="font-size: 0.75rem;">0 / 1000</span>
+                            </div>
+                            <textarea name="review_text" id="review-textarea" class="form-control shadow-sm" rows="4" maxlength="1000" 
+                                      placeholder="Share what you loved most about the destinations, hospitality, guidance, and travel comfort..." required></textarea>
+                        </div>
+
+                        <div class="col-12 mt-3">
+                            <button type="submit" class="btn btn-accent px-4 py-2 fw-semibold">
+                                <i class="bi bi-send-check me-2"></i> Submit Tour Review
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Past Submitted Reviews List -->
+            <div class="card card-custom p-4 border-0 shadow-sm">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-clock-history text-primary-custom me-2"></i> My Past Reviews</h5>
+                    <span class="badge bg-light text-dark border small">{{ user_reviews|length }} Submitted</span>
+                </div>
+                {% if user_reviews %}
+                    <div class="list-group list-group-flush">
+                        {% for r in user_reviews %}
+                        <div class="list-group-item px-0 py-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <h6 class="fw-bold mb-0 text-dark">{{ r.package_name }}</h6>
+                                <div>
+                                    {% if r.is_approved %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle small"><i class="bi bi-check2"></i> Public</span>
+                                    {% else %}
+                                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle small"><i class="bi bi-hourglass-split"></i> Pending Moderation</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="star-rating small mb-2">
+                                {% for s in range(r.rating) %}
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                {% endfor %}
+                                {% for s in range(5 - r.rating) %}
+                                    <i class="bi bi-star text-muted"></i>
+                                {% endfor %}
+                                <span class="ms-2 text-muted" style="font-size: 0.75rem;">Submitted on {{ r.created_at.strftime('%b %d, %Y') if r.created_at else '' }}</span>
+                            </div>
+                            <p class="text-muted small mb-0" style="line-height: 1.7; white-space: pre-line;">
+                                "{{ r.review_text }}"
+                            </p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-chat-heart display-5 text-muted d-block mb-2"></i>
+                        <p class="small mb-0">No reviews submitted yet. Pick any package above to submit your first feedback!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // 1. Star Rating Interactive Widget
+    const starBox = document.getElementById('star-rating-box');
+    const ratingInput = document.getElementById('review-rating-input');
+    const ratingDescBadge = document.getElementById('rating-desc-badge');
+    const stars = starBox ? starBox.querySelectorAll('.star-item') : [];
+
+    const ratingDescriptions = {
+        1: "1.0 ★ Terrible",
+        2: "2.0 ★ Poor",
+        3: "3.0 ★ Average",
+        4: "4.0 ★ Very Good",
+        5: "5.0 ★ Excellent"
+    };
+
+    function setStarRating(val) {
+        ratingInput.value = val;
+        stars.forEach((star, idx) => {
+            if (idx < val) {
+                star.classList.remove('bi-star');
+                star.classList.add('bi-star-fill', 'active');
+            } else {
+                star.classList.remove('bi-star-fill', 'active');
+                star.classList.add('bi-star');
+            }
+        });
+        if (ratingDescBadge && ratingDescriptions[val]) {
+            ratingDescBadge.textContent = ratingDescriptions[val];
+        }
+    }
+
+    stars.forEach(star => {
+        star.addEventListener('click', function () {
+            const val = parseInt(this.getAttribute('data-value'), 10);
+            setStarRating(val);
+        });
+
+        star.addEventListener('mouseenter', function () {
+            const hoverVal = parseInt(this.getAttribute('data-value'), 10);
+            stars.forEach((s, idx) => {
+                if (idx < hoverVal) {
+                    s.classList.remove('bi-star');
+                    s.classList.add('bi-star-fill');
+                } else {
+                    s.classList.remove('bi-star-fill');
+                    s.classList.add('bi-star');
+                }
+            });
+        });
+    });
+
+    if (starBox) {
+        starBox.addEventListener('mouseleave', function () {
+            const currentVal = parseInt(ratingInput.value, 10) || 5;
+            setStarRating(currentVal);
+        });
+    }
+
+    // 2. Experience Highlights Tag Pills
+    const tagPills = document.querySelectorAll('.experience-tag-pill');
+    const hiddenTagsContainer = document.getElementById('hidden-tags-container');
+
+    tagPills.forEach(pill => {
+        pill.addEventListener('click', function () {
+            this.classList.toggle('active');
+            updateHiddenTags();
+        });
+    });
+
+    function updateHiddenTags() {
+        if (!hiddenTagsContainer) return;
+        hiddenTagsContainer.innerHTML = '';
+        const activePills = document.querySelectorAll('.experience-tag-pill.active');
+        activePills.forEach(pill => {
+            const tagVal = pill.getAttribute('data-tag');
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'review_tags';
+            hidden.value = tagVal;
+            hiddenTagsContainer.appendChild(hidden);
+        });
+    }
+
+    // 3. Package Select Sync Booking ID
+    const packageSelect = document.getElementById('review-package-select');
+    const bookingIdInput = document.getElementById('review-booking-id');
+    if (packageSelect && bookingIdInput) {
+        packageSelect.addEventListener('change', function () {
+            const selectedOpt = this.options[this.selectedIndex];
+            const bookingId = selectedOpt ? selectedOpt.getAttribute('data-booking-id') : '';
+            bookingIdInput.value = bookingId || '';
+        });
+    }
+
+    // 4. Character Counter
+    const textarea = document.getElementById('review-textarea');
+    const charCount = document.getElementById('review-char-count');
+    if (textarea && charCount) {
+        textarea.addEventListener('input', function () {
+            charCount.textContent = `${this.value.length} / 1000`;
+        });
+    }
+});
+</script>
+{% endblock %}

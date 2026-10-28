@@ -1,0 +1,342 @@
+{% extends 'base.html' %}
+
+{% block title %}Atlas Tourism - Discover Your Next Adventure{% endblock %}
+
+{% block content %}
+<!-- 1. HERO SECTION -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">Discover Your Next Adventure</h1>
+            <p class="hero-subtitle">
+                Explore hand-crafted holiday packages, sacred temple corridors, mist-clad hill stations, and tropical island gateways with Atlas Tourism.
+            </p>
+
+            <!-- Search Box -->
+            <div class="hero-search-box text-dark mb-4">
+                <form action="{{ url_for('packages.index') }}" method="GET" class="row g-2 align-items-center">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-0 text-muted"><i class="bi bi-search"></i></span>
+                            <input type="text" name="q" class="form-control border-0 shadow-none ps-0" placeholder="Where do you want to travel? (e.g. Nepal, Darjeeling)">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="dropdown border-start ps-2 w-100 position-relative">
+                            <input type="hidden" name="destination_id" id="hero-destination-id" value="">
+                            <button class="btn btn-white w-100 d-flex align-items-center justify-content-between text-start border-0 shadow-none dropdown-toggle hero-dest-dropdown-btn" type="button" id="destinationDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span class="d-flex align-items-center gap-2 text-truncate text-dark">
+                                    <i class="bi bi-geo-alt text-muted flex-shrink-0"></i>
+                                    <span id="hero-destination-label" class="fw-medium text-truncate">All Destinations</span>
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu shadow border-0 rounded-4 mt-2 w-100 hero-dest-dropdown-menu" aria-labelledby="destinationDropdownBtn" style="max-height: 280px; overflow-y: auto;">
+                                <li>
+                                    <a class="dropdown-item active d-flex align-items-center justify-content-between hero-dest-item" href="javascript:void(0)" data-value="" data-label="All Destinations">
+                                        <span><i class="bi bi-globe me-2 text-primary-custom"></i> All Destinations</span>
+                                        <i class="bi bi-check2 check-indicator text-primary-custom"></i>
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                {% for dest in destinations %}
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center justify-content-between hero-dest-item" href="javascript:void(0)" data-value="{{ dest.id }}" data-label="{{ dest.name }}">
+                                        <span><i class="bi bi-geo-alt me-2 text-muted"></i> {{ dest.name }}</span>
+                                        <i class="bi bi-check2 check-indicator text-primary-custom d-none"></i>
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            Search Tours
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Hero Action Buttons -->
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="{{ url_for('destinations.index') }}" class="btn btn-light px-4 py-2 fw-semibold rounded-pill shadow-sm">
+                    <i class="bi bi-compass me-1 text-primary-custom"></i> Explore Destinations
+                </a>
+                <a href="{{ url_for('packages.index') }}" class="btn btn-accent px-4 py-2 fw-semibold rounded-pill shadow-sm">
+                    <i class="bi bi-calendar-check me-1"></i> Book Now
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2. STATISTICS SECTION (FLOATING OVER HERO) -->
+<section class="container">
+    <div class="stats-section">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-lg-3">
+                <div class="stat-item border-end-lg">
+                    <h3>1000+</h3>
+                    <p>Happy Travellers</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-item border-end-lg">
+                    <h3>50+</h3>
+                    <p>Destinations</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-item border-end-lg">
+                    <h3>100+</h3>
+                    <p>Tour Packages</p>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="stat-item">
+                    <h3>4.8/5</h3>
+                    <p>Average Rating</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 3. POPULAR DESTINATIONS -->
+<section class="py-5 my-4">
+    <div class="container">
+        <div class="section-header">
+            <span class="sub-badge"><i class="bi bi-pin-map-fill me-1"></i> Top Picks</span>
+            <h2>Popular Destinations</h2>
+            <p class="text-muted">Uncover breathtaking landscapes, rich historic cultures, and iconic sights</p>
+        </div>
+
+        <div class="row g-4">
+            {% for dest in destinations %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card card-custom h-100">
+                    <div class="card-img-top-wrapper">
+                        <img src="{{ dest.image_url }}" alt="{{ dest.name }}" loading="lazy">
+                        <span class="badge-tag"><i class="bi bi-geo-alt-fill me-1"></i> {{ dest.location }}</span>
+                        {% if session.get('user_id') %}
+                        <button class="btn-wishlist-card btn-wishlist-dest-toggle {% if dest.id in user_dest_wishlist %}active{% endif %}" data-destination-id="{{ dest.id }}" title="Wishlist Destination">
+                            <i class="bi {% if dest.id in user_dest_wishlist %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <h4 class="card-title fw-bold mb-2">{{ dest.name }}</h4>
+                        <p class="card-text text-muted small flex-grow-1" style="line-height: 1.6;">
+                            {{ dest.description[:130] }}...
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
+                            <div>
+                                <span class="text-muted small d-block">Starting from</span>
+                                <span class="fw-bold fs-5 text-primary-custom">₹{{ "{:,.0f}".format(dest.starting_price) }}</span>
+                            </div>
+                            <a href="{{ url_for('destinations.details', destination_id=dest.id) }}" class="btn btn-sm btn-outline-primary px-3">
+                                View Details <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ url_for('destinations.index') }}" class="btn btn-outline-primary px-4 py-2">
+                View All Destinations ({{ destinations|length }}) <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- 4. FEATURED TOUR PACKAGES -->
+<section class="py-5 bg-white border-top border-bottom">
+    <div class="container">
+        <div class="section-header">
+            <span class="sub-badge"><i class="bi bi-suitcase-lg-fill me-1"></i> Featured Holidays</span>
+            <h2>Curated Tour Packages</h2>
+            <p class="text-muted">Complete vacation packages inclusive of stays, transport, meals, and guided activities</p>
+        </div>
+
+        <div class="row g-4">
+            {% for pkg in packages %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card card-custom h-100">
+                    <div class="card-img-top-wrapper">
+                        <img src="{{ pkg.image_url }}" alt="{{ pkg.name }}" loading="lazy">
+                        <span class="badge-tag bg-primary"><i class="bi bi-clock me-1"></i> {{ pkg.duration }}</span>
+                        {% if session.get('user_id') %}
+                        <button class="btn-wishlist-card btn-wishlist-toggle" data-package-id="{{ pkg.id }}" title="Save to wishlist">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-light text-primary-custom border fw-semibold small">
+                                <i class="bi bi-geo-alt"></i> {{ pkg.destination_name }}
+                            </span>
+                            <div class="star-rating">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <span class="text-dark small fw-bold ms-1">{{ "%.1f"|format(pkg.avg_rating|float) }}</span>
+                            </div>
+                        </div>
+
+                        <h5 class="fw-bold mb-2">
+                            <a href="{{ url_for('packages.details', package_id=pkg.id) }}" class="text-dark text-decoration-none">
+                                {{ pkg.name }}
+                            </a>
+                        </h5>
+
+                        <p class="text-muted small mb-3">
+                            {{ pkg.description[:110] }}...
+                        </p>
+
+                        <!-- Amenities Chips -->
+                        <div class="d-flex flex-wrap gap-2 mb-3 small text-muted">
+                            <span class="badge bg-light text-secondary border"><i class="bi bi-building"></i> Hotel</span>
+                            <span class="badge bg-light text-secondary border"><i class="bi bi-car-front"></i> Transfers</span>
+                            <span class="badge bg-light text-secondary border"><i class="bi bi-cup-hot"></i> Meals</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                            <div>
+                                <span class="text-muted small d-block">Per person</span>
+                                <span class="fw-bold fs-5 text-primary-custom">₹{{ "{:,.0f}".format(pkg.price) }}</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{{ url_for('packages.details', package_id=pkg.id) }}" class="btn btn-sm btn-outline-primary pkg-action-btn">
+                                    View Details
+                                </a>
+                                <a href="{{ url_for('booking.book', package_id=pkg.id) }}" class="btn btn-sm btn-accent pkg-action-btn">
+                                    Book Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-5">
+            <a href="{{ url_for('packages.index') }}" class="btn btn-primary px-4 py-2">
+                Explore All Packages <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- 5. WHY CHOOSE US -->
+<section class="py-5" id="why-us">
+    <div class="container py-4">
+        <div class="section-header">
+            <span class="sub-badge"><i class="bi bi-shield-check me-1"></i> Our Promise</span>
+            <h2>Why Choose Atlas Tourism?</h2>
+            <p class="text-muted">We combine local destination expertise with hassle-free booking convenience</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="bi bi-tags-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Best Price</h5>
+                    <p class="text-muted small mb-0">Transparent pricing with zero hidden fees and exclusive seasonal discount offers.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="bi bi-person-badge-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Trusted Guides</h5>
+                    <p class="text-muted small mb-0">Certified native tour managers committed to your safety, comfort, and storytelling.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Easy Booking</h5>
+                    <p class="text-muted small mb-0">Instant date selection, traveller management, and seamless Razorpay digital checkouts.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="feature-box">
+                    <div class="feature-icon">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">24/7 Support</h5>
+                    <p class="text-muted small mb-0">Dedicated concierge on call throughout your journey from boarding to returning home.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 6. CUSTOMER REVIEWS (STORED IN DB) -->
+<section class="py-5 bg-white border-top border-bottom" id="reviews">
+    <div class="container">
+        <div class="section-header">
+            <span class="sub-badge"><i class="bi bi-chat-quote-fill me-1"></i> Testimonials</span>
+            <h2>Real Traveller Reviews</h2>
+            <p class="text-muted">Hear directly from verified guests who explored the world with Atlas Tourism</p>
+        </div>
+
+        <div class="row g-4">
+            {% if reviews %}
+                {% for rev in reviews %}
+                <div class="col-md-4">
+                    <div class="review-card h-100 d-flex flex-column">
+                        <div class="star-rating mb-3">
+                            {% for i in range(rev.rating) %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                            {% endfor %}
+                            {% for i in range(5 - rev.rating) %}
+                                <i class="bi bi-star text-muted"></i>
+                            {% endfor %}
+                        </div>
+                        <p class="review-quote flex-grow-1">
+                            "{{ rev.review_text }}"
+                        </p>
+                        <div class="d-flex align-items-center gap-3 pt-3 border-top mt-3">
+                            <div class="rounded-circle bg-primary-custom text-white d-flex align-items-center justify-content-center fw-bold" style="width: 44px; height: 44px;">
+                                {{ rev.user_name[:1] }}
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ rev.user_name }}</h6>
+                                <span class="text-muted small">{{ rev.package_name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center text-muted py-4">
+                    <p>No customer reviews yet. Book a trip and be the first to share your experience!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- 7. CALL TO ACTION -->
+<section class="container">
+    <div class="cta-section">
+        <h2 class="fw-bold text-white mb-3">Ready to explore the world?</h2>
+        <p class="lead mb-4 opacity-90" style="max-width: 600px; margin: 0 auto;">
+            Choose from over 100+ tour packages and experience memorable journeys with special seasonal savings.
+        </p>
+        <a href="{{ url_for('packages.index') }}" class="btn btn-light btn-lg px-5 py-3 fw-bold rounded-pill text-primary-custom shadow">
+            Explore Packages <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
+</section>
+{% endblock %}

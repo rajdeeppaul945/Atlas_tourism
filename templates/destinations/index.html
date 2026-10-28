@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}Explore Destinations - Atlas Tourism{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-white border-bottom">
+    <div class="container py-3">
+        <div class="row align-items-center justify-content-between g-4">
+            <div class="col-lg-6">
+                <span class="sub-badge"><i class="bi bi-map-fill me-1"></i> Destinations</span>
+                <h1 class="fw-bold mt-2">Discover Iconic Landscapes</h1>
+                <p class="text-muted mb-0">Browse our hand-selected destinations spanning the Himalayas, eastern hill stations, and tropical archipelagos.</p>
+            </div>
+            <div class="col-lg-5">
+                <form method="GET" action="{{ url_for('destinations.index') }}">
+                    <div class="input-group shadow-sm">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" name="search" class="form-control border-start-0" 
+                               placeholder="Search destination (e.g. Nepal, Darjeeling)" 
+                               value="{{ search_query }}">
+                        <button type="submit" class="btn btn-primary px-4">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        {% if search_query %}
+            <div class="mb-4">
+                <p class="text-muted">Showing results for: <span class="fw-bold text-dark">"{{ search_query }}"</span> 
+                   <a href="{{ url_for('destinations.index') }}" class="ms-2 text-danger small text-decoration-none"><i class="bi bi-x-circle"></i> Clear filter</a>
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="row g-4">
+            {% if destinations %}
+                {% for dest in destinations %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-custom h-100">
+                        <div class="card-img-top-wrapper">
+                            <img src="{{ dest.image_url }}" alt="{{ dest.name }}" loading="lazy">
+                            <span class="badge-tag"><i class="bi bi-geo-alt-fill me-1"></i> {{ dest.location }}</span>
+                            {% if session.get('user_id') %}
+                            <button class="btn-wishlist-card btn-wishlist-dest-toggle {% if dest.id in user_dest_wishlist %}active{% endif %}" data-destination-id="{{ dest.id }}" title="Wishlist Destination">
+                                <i class="bi {% if dest.id in user_dest_wishlist %}bi-heart-fill{% else %}bi-heart{% endif %}"></i>
+                            </button>
+                            {% endif %}
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h4 class="card-title fw-bold mb-2">{{ dest.name }}</h4>
+                            <p class="card-text text-muted small flex-grow-1" style="line-height: 1.6;">
+                                {{ dest.description[:140] }}...
+                            </p>
+
+                            <!-- Destination Quick Meta -->
+                            <div class="bg-light p-2 rounded-3 small text-muted mb-3">
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span><i class="bi bi-calendar3 me-1 text-primary-custom"></i> Best Time:</span>
+                                    <span class="fw-semibold text-dark">{{ dest.best_time }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span><i class="bi bi-suitcase-lg me-1 text-primary-custom"></i> Available Tours:</span>
+                                    <span class="fw-semibold text-dark">{{ dest.package_count if dest.package_count is defined else 'Multiple' }} Packages</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                <div>
+                                    <span class="text-muted small d-block">Starting from</span>
+                                    <span class="fw-bold fs-5 text-primary-custom">₹{{ "{:,.0f}".format(dest.starting_price) }}</span>
+                                </div>
+                                <a href="{{ url_for('destinations.details', destination_id=dest.id) }}" class="btn btn-outline-primary px-3">
+                                    View Details <i class="bi bi-arrow-right ms-1"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <i class="bi bi-geo-alt text-muted display-3 d-block mb-3"></i>
+                    <h4>No destinations found matching your criteria</h4>
+                    <p class="text-muted">Try searching with a different keyword or view our complete list.</p>
+                    <a href="{{ url_for('destinations.index') }}" class="btn btn-primary mt-2">View All Destinations</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

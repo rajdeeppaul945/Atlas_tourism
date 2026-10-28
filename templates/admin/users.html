@@ -1,0 +1,76 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}User Management - Atlas Admin{% endblock %}
+{% block page_heading %}Registered Travellers & User Accounts{% endblock %}
+
+{% block admin_content %}
+<div class="card card-custom p-4 bg-white">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h5 class="fw-bold mb-0">System Users ({{ users|length }})</h5>
+            <span class="text-muted small">Passphrases are securely salted and hashed using PBKDF2:SHA256. Plaintext credentials are strictly protected.</span>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle small">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Full Name</th>
+                    <th>Username</th>
+                    <th>Email Address</th>
+                    <th>Phone</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for u in users %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="fw-semibold text-dark">{{ u.full_name }}</td>
+                    <td><code>@{{ u.username }}</code></td>
+                    <td>{{ u.email }}</td>
+                    <td>{{ u.phone }}</td>
+                    <td>
+                        {% if u.role == 'admin' %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Administrator</span>
+                        {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary border">Traveller</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if u.is_active %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                        {% else %}
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Deactivated</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ u.created_at }}</td>
+                    <td>
+                        {% if u.id != session.get('user_id') %}
+                        <form action="{{ url_for('admin.toggle_user_status', user_id=u.id) }}" method="POST" class="d-inline">
+                            <input type="hidden" name="is_active" value="{{ 0 if u.is_active else 1 }}">
+                            <button type="submit" class="btn btn-sm {% if u.is_active %}btn-outline-danger{% else %}btn-outline-success{% endif %} py-1 px-2" 
+                                    title="{% if u.is_active %}Deactivate User{% else %}Activate User{% endif %}">
+                                {% if u.is_active %}
+                                    <i class="bi bi-person-x"></i> Deactivate
+                                {% else %}
+                                    <i class="bi bi-person-check"></i> Activate
+                                {% endif %}
+                            </button>
+                        </form>
+                        {% else %}
+                            <span class="text-muted small">You (Current)</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

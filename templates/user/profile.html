@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile - Atlas Tourism{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-3">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            {% with active_page='profile' %}
+                {% include 'user/_sidebar.html' %}
+            {% endwith %}
+        </div>
+
+        <!-- Profile Forms -->
+        <div class="col-lg-9">
+            <!-- Account Info Edit Form -->
+            <div class="card card-custom p-3 p-md-4 mb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <div>
+                        <h4 class="fw-bold mb-1">Personal Information</h4>
+                        <p class="text-muted small mb-0">Update your primary traveller contact and billing details</p>
+                    </div>
+                    <button type="button" id="btn-edit-toggle" class="btn btn-outline-primary px-3 py-2 fw-semibold">
+                        <i class="bi bi-pencil-square me-1"></i> Edit Profile
+                    </button>
+                </div>
+
+                <form method="POST" action="{{ url_for('user.profile') }}" id="profile-form">
+                    <input type="hidden" name="action" value="update_info">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Full Name</label>
+                            <input type="text" name="full_name" id="field_full_name" class="form-control" value="{{ user.full_name }}" readonly disabled required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Username</label>
+                            <input type="text" class="form-control bg-light" value="{{ user.username }}" readonly disabled>
+                            <span class="text-muted" style="font-size: 0.75rem;">Username cannot be altered.</span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Email Address</label>
+                            <input type="email" name="email" id="field_email" class="form-control" value="{{ user.email }}" readonly disabled required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small">Country / Region</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-globe-americas text-muted"></i></span>
+                                <input type="text" class="form-control border-start-0" id="profile_country_input" name="country_name" 
+                                       list="profile_country_options" placeholder="Select or type country" 
+                                       value="{{ user.country if user.country else 'India' }}" autocomplete="off" readonly disabled required>
+                                <datalist id="profile_country_options">
+                                    {% for c in countries %}
+                                        <option value="{{ c.name }}" data-code="{{ c.code }}">{{ c.name }} ({{ c.code }})</option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small">Phone Number</label>
+                            <div class="input-group">
+                                <select class="form-select bg-light fw-semibold" id="profile_country_code" name="country_code" style="max-width: 140px;" disabled>
+                                    {% for c in countries %}
+                                        <option value="{{ c.code }}" {% if c.code == '+91' %}selected{% endif %}>
+                                            {{ c.code }} ({{ c.iso }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <input type="tel" name="phone" class="form-control" id="profile_phone" value="{{ user.phone }}" placeholder="e.g. 6901850478" readonly disabled required>
+                            </div>
+                            <span class="text-muted" style="font-size: 0.75rem;">Verified authentic carrier/mobile format required.</span>
+                        </div>
+                        <div class="col-12 mt-4 d-flex align-items-center gap-2">
+                            <button type="submit" id="btn-save-profile" class="btn btn-primary px-4 py-2" style="display: none;">
+                                <i class="bi bi-check2-circle me-1"></i> Save Profile Changes
+                            </button>
+                            <button type="button" id="btn-cancel-edit" class="btn btn-outline-secondary px-3 py-2" style="display: none;">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Password Change Form -->
+            <div class="card card-custom p-3 p-md-4">
+                <h4 class="fw-bold mb-1">Change Account Password</h4>
+                <p class="text-muted small mb-3">Ensure your account uses a strong, secure passphrase</p>
+
+                <form method="POST" action="{{ url_for('user.profile') }}">
+                    <input type="hidden" name="action" value="change_password">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Current Password</label>
+                            <div class="input-password-wrapper">
+                                <input type="password" name="current_password" id="cur_pass" class="form-control pe-5" required>
+                                <button type="button" class="password-toggle-btn" data-target="cur_pass">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">New Password</label>
+                            <div class="input-password-wrapper">
+                                <input type="password" name="new_password" id="new_pass" class="form-control pe-5" minlength="6" required>
+                                <button type="button" class="password-toggle-btn" data-target="new_pass">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Confirm New Password</label>
+                            <div class="input-password-wrapper">
+                                <input type="password" name="confirm_password" id="conf_pass" class="form-control pe-5" minlength="6" required>
+                                <button type="button" class="password-toggle-btn" data-target="conf_pass">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-outline-primary px-4 py-2">
+                                Update Password
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnEdit = document.getElementById('btn-edit-toggle');
+    const btnSave = document.getElementById('btn-save-profile');
+    const btnCancel = document.getElementById('btn-cancel-edit');
+    
+    const fieldFullName = document.getElementById('field_full_name');
+    const fieldEmail = document.getElementById('field_email');
+    const fieldCountry = document.getElementById('profile_country_input');
+    const fieldCode = document.getElementById('profile_country_code');
+    const fieldPhone = document.getElementById('profile_phone');
+    const dataList = document.getElementById('profile_country_options');
+
+    // Store original values for cancel action
+    let originalValues = {
+        name: fieldFullName ? fieldFullName.value : '',
+        email: fieldEmail ? fieldEmail.value : '',
+        country: fieldCountry ? fieldCountry.value : '',
+        phone: fieldPhone ? fieldPhone.value : ''
+    };
+
+    // Auto detect country code from existing phone if formatted with '+'
+    if (fieldPhone && fieldCode) {
+        const val = fieldPhone.value.trim();
+        if (val.startsWith('+')) {
+            for (let opt of fieldCode.options) {
+                if (val.startsWith(opt.value)) {
+                    fieldCode.value = opt.value;
+                    if (dataList && fieldCountry && !fieldCountry.value) {
+                        for (let dOpt of dataList.options) {
+                            if (dOpt.getAttribute('data-code') === opt.value) {
+                                fieldCountry.value = dOpt.value;
+                                break;
+                            }
+                        }
+                    }
+                    fieldPhone.value = val.slice(opt.value.length).trim();
+                    originalValues.phone = fieldPhone.value;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Toggle Edit Mode
+    function setEditMode(editable) {
+        const inputs = [fieldFullName, fieldEmail, fieldCountry, fieldPhone];
+        inputs.forEach(input => {
+            if (input) {
+                if (editable) {
+                    input.removeAttribute('readonly');
+                    input.removeAttribute('disabled');
+                    input.classList.remove('bg-light');
+                } else {
+                    input.setAttribute('readonly', 'true');
+                    input.setAttribute('disabled', 'true');
+                }
+            }
+        });
+        if (fieldCode) {
+            if (editable) {
+                fieldCode.removeAttribute('disabled');
+            } else {
+                fieldCode.setAttribute('disabled', 'true');
+            }
+        }
+
+        if (editable) {
+            btnEdit.style.display = 'none';
+            btnSave.style.display = 'inline-block';
+            btnCancel.style.display = 'inline-block';
+            fieldFullName.focus();
+        } else {
+            btnEdit.style.display = 'inline-block';
+            btnSave.style.display = 'none';
+            btnCancel.style.display = 'none';
+        }
+    }
+
+    if (btnEdit) {
+        btnEdit.addEventListener('click', function() {
+            setEditMode(true);
+        });
+    }
+
+    if (btnCancel) {
+        btnCancel.addEventListener('click', function() {
+            if (fieldFullName) fieldFullName.value = originalValues.name;
+            if (fieldEmail) fieldEmail.value = originalValues.email;
+            if (fieldCountry) fieldCountry.value = originalValues.country;
+            if (fieldPhone) fieldPhone.value = originalValues.phone;
+            setEditMode(false);
+        });
+    }
+
+    // Country & Code synchronization
+    if (fieldCountry && fieldCode && dataList) {
+        fieldCountry.addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase();
+            for (let option of dataList.options) {
+                if (option.value.toLowerCase() === val || option.text.toLowerCase().includes(val)) {
+                    const code = option.getAttribute('data-code');
+                    if (code) {
+                        fieldCode.value = code;
+                        break;
+                    }
+                }
+            }
+        });
+        
+        fieldCode.addEventListener('change', function() {
+            const selectedCode = this.value;
+            for (let option of dataList.options) {
+                if (option.getAttribute('data-code') === selectedCode) {
+                    fieldCountry.value = option.value;
+                    break;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,1414 @@
+.bg-primary-light { background-color: var(--primary-light) !important; }
+/* =========================================================
+   ATLAS TOURISM - MODERN TRAVEL & TOURISM STYLESHEET
+   Clean Light Theme, Poppins Typography, Elevated Cards
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@1,400;1,500;1,600;1,700&display=swap');
+
+:root {
+    --primary: #0d9488;
+    --primary-dark: #0f766e;
+    --primary-light: #ccfbf1;
+    --secondary: #0284c7;
+    --accent: #f59e0b;
+    --accent-hover: #d97706;
+    --dark: #0f172a;
+    --slate: #475569;
+    --light-bg: #f8fafc;
+    --white: #ffffff;
+    --border-color: #e2e8f0;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --card-shadow-hover: 0 12px 30px rgba(13, 148, 136, 0.15);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--dark);
+    background-color: var(--light-bg);
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Typography & Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.text-primary-custom {
+    color: var(--primary) !important;
+}
+
+.text-accent-custom {
+    color: var(--accent) !important;
+}
+
+.bg-primary-custom {
+    background-color: var(--primary) !important;
+}
+
+/* Navbar */
+.navbar-custom {
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+    padding: 0.85rem 0;
+    transition: var(--transition);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--dark) !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+}
+
+.site-logo {
+    height: 48px;
+    max-width: 240px;
+    object-fit: contain;
+    display: inline-block;
+    vertical-align: middle;
+    transition: transform 0.2s ease;
+}
+
+.site-logo-footer {
+    height: 68px;
+    max-width: 280px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    opacity: 0.98;
+    margin-bottom: 0.4rem;
+    transition: transform 0.2s ease;
+}
+
+.footer-tagline {
+    font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #e2e8f0;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.85rem;
+    line-height: 1.4;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.site-logo-admin {
+    height: 38px;
+    max-width: 180px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.site-logo-voucher {
+    height: 50px;
+    max-width: 240px;
+    object-fit: contain;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #334155 !important;
+    padding: 0.45rem 0.8rem !important;
+    border-radius: 8px;
+    white-space: nowrap !important;
+    transition: var(--transition);
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-dark) !important;
+    background-color: var(--primary-light) !important;
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    font-weight: 600;
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 148, 136, 0.25);
+}
+
+.btn-outline-primary {
+    color: var(--primary);
+    border-color: var(--primary);
+    font-weight: 600;
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.btn-accent {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 0.6rem 1.4rem;
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.btn-accent:hover,
+.btn-accent:focus,
+.btn-accent:active {
+    background-color: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(13, 148, 136, 0.3) !important;
+}
+
+/* Cards */
+.card-custom {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    overflow: hidden;
+}
+
+.card-custom:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--card-shadow-hover);
+    border-color: rgba(13, 148, 136, 0.3);
+}
+
+.card-custom .card-img-top-wrapper {
+    position: relative;
+    overflow: hidden;
+    height: 220px;
+}
+
+.card-custom .card-img-top-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card-custom:hover .card-img-top-wrapper img {
+    transform: scale(1.06);
+}
+
+.badge-tag {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #fff;
+    backdrop-filter: blur(4px);
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-wishlist-card {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: var(--transition);
+    color: #94a3b8;
+}
+
+.btn-wishlist-card:hover, .btn-wishlist-card.active {
+    color: #ef4444;
+    background: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    padding: 140px 0 100px 0;
+    background: linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.75)),
+                url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+    color: #fff;
+    border-radius: 0 0 30px 30px;
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: 3.25rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 1.25rem;
+    line-height: 1.2;
+    color: #f59e0b;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    font-weight: 300;
+    opacity: 0.95;
+    margin-bottom: 2.5rem;
+}
+
+.hero-search-box {
+    background: #fff;
+    padding: 12px;
+    border-radius: 18px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+}
+
+/* Features / Why Us */
+.feature-box {
+    background: #fff;
+    padding: 2.5rem 1.5rem;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.feature-box:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--card-shadow-hover);
+    border-color: var(--primary);
+}
+
+.feature-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.25rem;
+}
+
+/* Stats Section */
+.stats-section {
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    padding: 3rem 1.5rem;
+    margin-top: -50px;
+    position: relative;
+    z-index: 10;
+    border: 1px solid var(--border-color);
+}
+
+.stat-item h3 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+}
+
+.stat-item p {
+    color: var(--slate);
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+/* Section Titles */
+.section-header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+}
+
+.section-header .sub-badge {
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: inline-block;
+    margin-bottom: 0.75rem;
+}
+
+.section-header h2 {
+    font-size: 2.4rem;
+    font-weight: 800;
+}
+
+/* Star Rating */
+.star-rating {
+    color: var(--accent);
+    font-size: 0.95rem;
+}
+
+/* Review Cards */
+.review-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    position: relative;
+}
+
+.review-quote {
+    font-style: italic;
+    color: var(--slate);
+    line-height: 1.7;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    border-radius: 24px;
+    padding: 4rem 2rem;
+    color: #fff;
+    text-align: center;
+    margin: 4rem 0;
+}
+
+/* Footer */
+.footer-custom {
+    background-color: #0b1329;
+    color: #cbd5e1;
+    padding: 5rem 0 2rem 0;
+    margin-top: 5rem;
+}
+
+.footer-custom h5 {
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.footer-custom a {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: var(--transition);
+    display: inline-block;
+    margin-bottom: 0.6rem;
+}
+
+.footer-custom a:hover {
+    color: var(--primary-light);
+    transform: translateX(4px);
+}
+
+.footer-bottom {
+    border-top: 1px solid #1e293b;
+    padding-top: 1.75rem;
+    margin-top: 3.5rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* Dashboard Layout */
+.dashboard-sidebar {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+}
+
+.dashboard-sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem !important;
+    margin-bottom: 0.4rem;
+    border-radius: 10px;
+    font-weight: 600;
+    color: #475569 !important;
+}
+
+.dashboard-sidebar .nav-link.active,
+.dashboard-sidebar .nav-link:hover {
+    background: var(--primary-light);
+    color: var(--primary) !important;
+}
+
+.metric-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.25rem 1.15rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-height: 104px;
+    height: 100%;
+    transition: var(--transition);
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.metric-icon {
+    width: 52px !important;
+    height: 52px !important;
+    min-width: 52px !important;
+    max-width: 52px !important;
+    flex-shrink: 0 !important;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Forms & Password Toggle */
+.form-control, .form-select {
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    border: 1.5px solid var(--border-color);
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.15);
+}
+
+.input-password-wrapper {
+    position: relative;
+}
+
+.password-toggle-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0;
+}
+
+.password-toggle-btn:hover {
+    color: var(--primary);
+}
+
+/* Printable Voucher Styles - Single Page Guarantee */
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 6mm 8mm;
+    }
+    html, body {
+        background-color: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-size: 10.5px !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    main {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .container {
+        padding: 0 !important;
+        margin: 0 auto !important;
+        max-width: 100% !important;
+        width: 100% !important;
+    }
+    .container.py-5 {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+    .col-lg-8 {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+    .navbar-custom, .footer-custom, .no-print, .btn {
+        display: none !important;
+    }
+    .printable-invoice {
+        border: 1.5px solid #0d9488 !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 12px 18px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        page-break-before: avoid !important;
+        page-break-after: avoid !important;
+    }
+    .printable-invoice .mb-4 { margin-bottom: 0.5rem !important; }
+    .printable-invoice .mb-3 { margin-bottom: 0.35rem !important; }
+    .printable-invoice .mb-2 { margin-bottom: 0.25rem !important; }
+    .printable-invoice .pb-4 { padding-bottom: 0.4rem !important; }
+    .printable-invoice .pt-4 { padding-top: 0.4rem !important; }
+    .printable-invoice .p-3 { padding: 0.4rem 0.6rem !important; }
+    .printable-invoice h4 { font-size: 1.05rem !important; }
+    .printable-invoice h6 { font-size: 0.82rem !important; margin-bottom: 0.2rem !important; }
+    .printable-invoice table th,
+    .printable-invoice table td { padding: 0.2rem 0.4rem !important; font-size: 0.75rem !important; }
+    .printable-invoice p,
+    .printable-invoice span,
+    .printable-invoice li { font-size: 0.74rem !important; line-height: 1.35 !important; }
+    .printable-invoice ul { margin-bottom: 0.2rem !important; }
+    .printable-invoice .badge { font-size: 0.7rem !important; padding: 0.2rem 0.45rem !important; }
+    .printable-invoice img { height: 38px !important; }
+}
+
+
+/* =========================================================
+   ENHANCED DROPDOWNS, SELECT OPTIONS & HOVER STATES
+   Fixes invisible text/symbols on hover & provides high contrast
+   ========================================================= */
+
+.dropdown-menu {
+    border-radius: 14px !important;
+    padding: 0.6rem !important;
+    box-shadow: 0 12px 36px rgba(15, 23, 42, 0.12) !important;
+    border: 1px solid var(--border-color) !important;
+    animation: dropdownFadeSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    transform-origin: top right;
+}
+
+@keyframes dropdownFadeSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-item {
+    font-weight: 500;
+    color: #1e293b !important;
+    padding: 0.65rem 1rem !important;
+    border-radius: 9px !important;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dropdown-item i {
+    font-size: 1.15rem;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+/* Crisp high-contrast hover state */
+.dropdown-item:hover, .dropdown-item:focus {
+    background-color: var(--primary-light) !important;
+    color: var(--primary-dark) !important;
+    transform: translateX(4px);
+}
+
+.dropdown-item:hover i, .dropdown-item:focus i {
+    color: var(--primary-dark) !important;
+    transform: scale(1.15);
+}
+
+/* Distinct hover for danger/logout item */
+.dropdown-item.text-danger:hover, .dropdown-item.text-danger:focus {
+    background-color: #fee2e2 !important;
+    color: #b91c1c !important;
+}
+
+.dropdown-item.text-danger:hover i, .dropdown-item.text-danger:focus i {
+    color: #b91c1c !important;
+    transform: scale(1.15);
+}
+
+/* HTML Form Select Options */
+select.form-select option {
+    background-color: #ffffff;
+    color: #0f172a;
+    padding: 8px 12px;
+}
+
+select.form-select option:hover,
+select.form-select option:focus,
+select.form-select option:checked {
+    background-color: var(--primary-light) !important;
+    color: var(--primary-dark) !important;
+}
+
+/* =========================================================
+   PAGE TRANSITION & BUTTON CLICK ANIMATIONS
+   Ultra-smooth, modern app-like transitions
+   ========================================================= */
+
+/* Smooth page fade-in on every page load */
+main {
+    animation: pageFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Tab & Pill smooth transitions */
+.nav-pills .nav-link {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+    background-color: rgba(13, 148, 136, 0.08);
+    color: var(--primary) !important;
+    transform: translateY(-1px);
+}
+
+/* Universal Button Click Feedback (Micro-interaction) */
+.btn {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Allow badges on buttons to remain fully visible */
+.btn.wishlist-nav-btn,
+.btn:has(#wishlist-badge),
+.btn.overflow-visible {
+    overflow: visible !important;
+}
+
+.wishlist-nav-btn {
+    width: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+}
+
+.wishlist-nav-btn i {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: translateY(1px) !important;
+}
+
+#wishlist-badge {
+    z-index: 10 !important;
+    font-weight: 700;
+    line-height: 1;
+    min-width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, 0.45);
+}
+
+.btn:active {
+    transform: scale(0.96) translateY(0) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Sidebar Navigation Items Smooth Active & Hover */
+.dashboard-sidebar .nav-link {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dashboard-sidebar .nav-link:hover:not(.active) {
+    background: #f1f5f9;
+    color: var(--primary) !important;
+    transform: translateX(4px);
+}
+
+.dashboard-sidebar .nav-link.active {
+    background: var(--primary-light);
+    color: var(--primary-dark) !important;
+    transform: translateX(2px);
+    font-weight: 700;
+}
+
+
+/* Dropdown Arrow rotation indicator */
+.dropdown-toggle::after {
+    display: inline-block;
+    margin-left: 0.55em;
+    vertical-align: 0.15em;
+    content: "";
+    border-top: 0.35em solid currentColor;
+    border-right: 0.35em solid transparent;
+    border-bottom: 0;
+    border-left: 0.35em solid transparent;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When dropdown is open, flip arrow to point upwards */
+.dropdown-toggle.show::after,
+.dropdown.show .dropdown-toggle::after,
+.btn-group.show .dropdown-toggle::after {
+    transform: rotate(180deg);
+}
+
+/* =========================================================
+   ENHANCED CALENDAR / DATE PICKER STYLING
+   Larger, prominent and beautiful modern date inputs
+   ========================================================= */
+
+.custom-travel-date {
+    font-size: 1.08rem !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.15rem !important;
+    border-radius: 12px !important;
+    border: 2px solid var(--border-color) !important;
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.custom-travel-date:focus,
+.custom-travel-date:hover {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.18) !important;
+}
+
+/* Chrome, Edge, Safari Calendar Icon styling */
+.custom-travel-date::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 5px;
+    filter: invert(45%) sepia(85%) saturate(450%) hue-rotate(130deg);
+    transform: scale(1.25);
+    transition: transform 0.2s ease;
+}
+
+.custom-travel-date::-webkit-calendar-picker-indicator:hover {
+    transform: scale(1.4);
+}
+
+/* Wishlist Remove & Action Buttons Alignment */
+.btn-outline-danger {
+    color: #dc2626;
+    border-color: #dc2626;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: var(--transition);
+}
+
+.btn-outline-danger:hover {
+    background-color: #dc2626;
+    border-color: #dc2626;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+.btn-outline-primary.btn-sm,
+.btn-outline-danger.btn-sm,
+.btn-primary.btn-sm,
+.btn-danger.btn-sm {
+    padding: 0.35rem 0.85rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.35rem !important;
+    height: 36px !important;
+    line-height: 1 !important;
+}
+
+.btn-outline-danger.btn-sm i,
+.btn-outline-primary.btn-sm i,
+.btn-sm i {
+    font-size: 0.95rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
+}
+
+/* =========================================================
+   ATLAS TOURISM MODERN CALENDAR (FLATPICKR CUSTOM THEME)
+   ========================================================= */
+.flatpickr-calendar {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    border-radius: 16px !important;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(13, 148, 136, 0.15) !important;
+    border: none !important;
+    padding: 12px 14px !important;
+    width: 325px !important;
+    background: #ffffff !important;
+    animation: fpFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fpFadeIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.flatpickr-months {
+    background: transparent !important;
+    padding: 6px 4px 10px 4px !important;
+    align-items: center;
+}
+
+.flatpickr-current-month {
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    color: var(--primary-dark) !important;
+    padding-top: 4px !important;
+}
+
+.flatpickr-current-month .cur-month {
+    font-weight: 700 !important;
+    color: var(--primary-dark) !important;
+}
+
+.flatpickr-current-month input.cur-year {
+    font-weight: 700 !important;
+    color: var(--primary-dark) !important;
+}
+
+.flatpickr-prev-month, .flatpickr-next-month {
+    padding: 6px !important;
+    border-radius: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.flatpickr-prev-month:hover, .flatpickr-next-month:hover {
+    background-color: var(--primary-light) !important;
+}
+
+.flatpickr-prev-month svg, .flatpickr-next-month svg {
+    fill: var(--primary) !important;
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.flatpickr-weekdays {
+    margin-bottom: 8px !important;
+}
+
+span.flatpickr-weekday {
+    color: #64748b !important;
+    font-weight: 600 !important;
+    font-size: 0.82rem !important;
+    text-transform: uppercase !important;
+}
+
+.flatpickr-days {
+    width: 100% !important;
+}
+
+.dayContainer {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    justify-content: space-around !important;
+}
+
+.flatpickr-day {
+    border-radius: 10px !important;
+    height: 38px !important;
+    line-height: 38px !important;
+    max-width: 38px !important;
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+    color: #1e293b !important;
+    border: 1px solid transparent !important;
+    transition: all 0.18s ease-in-out !important;
+    margin: 2px !important;
+}
+
+.flatpickr-day:hover {
+    background: #ccfbf1 !important;
+    color: var(--primary-dark) !important;
+    transform: scale(1.06);
+}
+
+.flatpickr-day.selected, 
+.flatpickr-day.startRange, 
+.flatpickr-day.endRange {
+    background: var(--primary) !important;
+    color: #ffffff !important;
+    border-color: var(--primary) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.38) !important;
+    transform: scale(1.05);
+}
+
+.flatpickr-day.today {
+    border-color: var(--primary) !important;
+    font-weight: 700 !important;
+    color: var(--primary) !important;
+}
+
+.flatpickr-day.today:hover {
+    background: #ccfbf1 !important;
+}
+
+.flatpickr-day.flatpickr-disabled, 
+.flatpickr-day.flatpickr-disabled:hover {
+    color: #cbd5e1 !important;
+    background: transparent !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* User Profile Navbar Dropdown Uniform Width & Alignment */
+@media (min-width: 992px) {
+    .user-nav-dropdown {
+        width: 215px !important;
+        min-width: 215px !important;
+        position: relative !important;
+    }
+
+    .user-nav-btn {
+        width: 100% !important;
+        min-width: 100% !important;
+        height: 44px !important;
+        padding: 0.45rem 1rem !important;
+        border-radius: 50rem !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        box-sizing: border-box !important;
+    }
+
+    .user-nav-dropdown .dropdown-menu {
+        width: 215px !important;
+        min-width: 215px !important;
+        max-width: 215px !important;
+        left: 0 !important;
+        right: 0 !important;
+        box-sizing: border-box !important;
+    }
+}
+
+/* =========================================================
+   UI ENHANCEMENTS: BUTTONS, OUTLINES & TABS
+   ========================================================= */
+
+/* Package Action Buttons Equal Sizing & Alignment */
+.pkg-action-btn,
+.btn-accent.btn-sm:not(.w-100):not(.wishlist-btn) {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    width: 112px !important;
+    min-width: 112px !important;
+    padding: 0.35rem 0.5rem !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+}
+
+/* Wishlist Action Buttons Equal Height & Full Width Row Alignment */
+.wishlist-btn {
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+}
+
+.wishlist-btn.btn-accent,
+.wishlist-btn.w-100,
+.d-grid > .btn-accent.w-100 {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Tab Navigation (Upcoming vs Completed Trips) Brand Teal Contrast */
+.nav-pills .nav-link {
+    border-radius: 10px !important;
+    padding: 0.55rem 1.15rem !important;
+    font-size: 0.9rem !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25) !important;
+}
+
+.nav-pills .nav-link.active i {
+    color: #ffffff !important;
+}
+
+.nav-pills .nav-link:not(.active) {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    font-weight: 500 !important;
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+    background-color: #e2e8f0 !important;
+    color: var(--primary-dark) !important;
+    transform: translateY(-1px);
+}
+
+/* User Navbar Profile Button Crisp Visible Outline */
+.user-nav-btn {
+    border: 1.5px solid #cbd5e1 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.user-nav-btn:hover,
+.user-nav-btn:focus,
+.user-nav-dropdown.show .user-nav-btn {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.18) !important;
+}
+
+/* Checkbox Visible Outline */
+.form-check-input {
+    border: 2px solid #94a3b8 !important;
+    border-radius: 5px !important;
+    cursor: pointer;
+    width: 1.15em;
+    height: 1.15em;
+    margin-top: 0.2em;
+    transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+.form-check-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2) !important;
+}
+
+/* Destination Banner & Dark Overlay Text Visibility & Semi-Bold Rule */
+.destination-hero-banner h1,
+.destination-hero-banner .display-4,
+.destination-hero-banner p,
+.destination-hero-banner .lead,
+.text-white h1,
+.text-white h2,
+.text-white h3,
+.text-white h4,
+.text-white h5,
+.text-white h6 {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.65) !important;
+}
+
+/* Financial Breakdown Discount Deductions - Clear Red */
+.financial-discount,
+.discount-deduction {
+    color: #dc2626 !important;
+    font-weight: 600 !important;
+}
+
+/* =========================================================
+   HERO SEARCH DESTINATION DROPDOWN
+   Matches user account / bootstrap floating dropdown style
+   ========================================================= */
+
+.hero-dest-dropdown-btn {
+    background-color: transparent !important;
+    border: none !important;
+    height: 44px !important;
+    font-size: 0.95rem !important;
+    color: #1e293b !important;
+    box-shadow: none !important;
+    padding: 0.4rem 0.6rem !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease;
+}
+
+.hero-dest-dropdown-btn:hover,
+.hero-dest-dropdown-btn:focus,
+.hero-dest-dropdown-btn.show {
+    background-color: rgba(13, 148, 136, 0.05) !important;
+    color: #0f172a !important;
+}
+
+.hero-dest-dropdown-btn::after {
+    color: #64748b !important;
+    margin-left: auto !important;
+    vertical-align: 0.12em !important;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-dest-dropdown-btn:hover::after,
+.hero-dest-dropdown-btn.show::after {
+    color: var(--primary) !important;
+}
+
+.hero-dest-dropdown-menu {
+    border-radius: 14px !important;
+    padding: 0.6rem !important;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.15) !important;
+    border: 1px solid var(--border-color) !important;
+    min-width: 100% !important;
+    width: 100% !important;
+    max-height: 340px !important;
+    overflow-y: auto !important;
+    animation: dropdownFadeSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-dest-dropdown-menu .dropdown-item {
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    padding: 0.6rem 0.85rem !important;
+    border-radius: 9px !important;
+    color: #334155 !important;
+    cursor: pointer !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.hero-dest-dropdown-menu .dropdown-item:hover {
+    background-color: var(--primary-light) !important;
+    color: var(--primary-dark) !important;
+    transform: translateX(4px);
+}
+
+.hero-dest-dropdown-menu .dropdown-item.active {
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
+.hero-dest-dropdown-menu .dropdown-item.active i,
+.hero-dest-dropdown-menu .dropdown-item.active span,
+.hero-dest-dropdown-menu .dropdown-item.active .check-indicator {
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   INTERACTIVE STAR RATING & EXPERIENCE TAGS (REVIEWS)
+   ========================================================= */
+
+.star-rating-interactive {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.star-rating-interactive .star-item {
+    font-size: 1.75rem;
+    color: #cbd5e1;
+    transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.star-rating-interactive .star-item.bi-star-fill,
+.star-rating-interactive .star-item.active {
+    color: #f59e0b !important;
+}
+
+.star-rating-interactive .star-item:hover {
+    transform: scale(1.22);
+}
+
+.experience-tag-pill {
+    cursor: pointer;
+    border: 1.5px solid #e2e8f0;
+    background-color: #f8fafc;
+    color: #475569;
+    padding: 0.45rem 0.9rem;
+    border-radius: 50rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.experience-tag-pill:hover {
+    border-color: var(--primary);
+    background-color: rgba(13, 148, 136, 0.06);
+    color: var(--primary-dark);
+    transform: translateY(-1px);
+}
+
+.experience-tag-pill.active {
+    border-color: var(--primary) !important;
+    background-color: var(--primary) !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+    transform: translateY(-1px);
+}
+
+/* =========================================================
+   FOOTER SOCIAL MEDIA BUTTONS - PERFECT EQUAL CIRCLES
+   ========================================================= */
+
+.footer-social-btn {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
+    border-radius: 50% !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+    color: #ffffff !important;
+    background-color: transparent !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-sizing: border-box !important;
+}
+
+.footer-social-btn i {
+    font-size: 1.12rem !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transition: transform 0.2s ease;
+}
+
+.footer-social-btn:hover {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #ffffff !important;
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35) !important;
+}
+
+.footer-social-btn:hover i {
+    transform: scale(1.1);
+}
+
+
+/* =========================================================
+   COUPON CODE INPUT & APPLY BUTTON SIZING & SPACING
+   Equal height, matching rounded corners, and proper spacing
+   ========================================================= */
+.coupon-input,
+.coupon-apply-btn {
+    height: 42px !important;
+    min-height: 42px !important;
+    max-height: 42px !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+}
+
+.coupon-input {
+    padding: 0.45rem 0.9rem !important;
+    font-size: 0.9rem !important;
+    letter-spacing: 0.5px !important;
+    border: 1.5px solid var(--border-color) !important;
+    background-color: #ffffff !important;
+    line-height: normal !important;
+}
+
+.coupon-input:focus {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15) !important;
+    outline: none !important;
+}
+
+.coupon-apply-btn {
+    padding: 0 1.25rem !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    line-height: 1 !important;
+}

@@ -1,0 +1,83 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Review Moderation - Atlas Admin{% endblock %}
+{% block page_heading %}Customer Feedback Moderation Desk{% endblock %}
+
+{% block admin_content %}
+<div class="card card-custom p-4 bg-white">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h5 class="fw-bold mb-0">Customer Reviews Queue ({{ reviews|length }})</h5>
+            <span class="text-muted small">Only approved reviews are displayed publicly across the home page and package detail views.</span>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle small">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Customer</th>
+                    <th>Tour Package</th>
+                    <th>Rating</th>
+                    <th>Review Content</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reviews %}
+                <tr>
+                    <td>{{ r.id }}</td>
+                    <td>
+                        <span class="fw-semibold text-dark d-block">{{ r.user_name }}</span>
+                        <span class="text-muted" style="font-size: 0.75rem;">{{ r.user_email }}</span>
+                    </td>
+                    <td class="fw-bold text-dark">{{ r.package_name }}</td>
+                    <td>
+                        <div class="star-rating">
+                            {% for i in range(r.rating) %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                            {% endfor %}
+                            <span class="small fw-bold text-dark ms-1">({{ r.rating }}/5)</span>
+                        </div>
+                    </td>
+                    <td style="max-width: 320px;">
+                        <span class="text-muted" style="line-height: 1.6;">"{{ r.review_text }}"</span>
+                    </td>
+                    <td>
+                        {% if r.is_approved %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-check-circle"></i> Approved</span>
+                        {% else %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle"><i class="bi bi-hourglass-split"></i> Pending Moderation</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ r.created_at }}</td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            {% if not r.is_approved %}
+                            <form action="{{ url_for('admin.approve_review', review_id=r.id) }}" method="POST">
+                                <button type="submit" class="btn btn-sm btn-outline-success py-1 px-2" title="Approve & Publish">
+                                    <i class="bi bi-check-lg"></i> Approve
+                                </button>
+                            </form>
+                            {% endif %}
+                            <form action="{{ url_for('admin.delete_review', review_id=r.id) }}" method="POST" onsubmit="return confirm('Delete this review completely?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" title="Reject / Delete">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">No customer reviews waiting in queue.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

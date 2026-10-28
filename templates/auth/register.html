@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+
+{% block title %}Register - Atlas Tourism<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countryInput = document.getElementById('country_input');
+    const countryCodeSelect = document.getElementById('country_code');
+    const dataList = document.getElementById('country_options');
+    
+    if (countryInput && countryCodeSelect && dataList) {
+        countryInput.addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase();
+            for (let option of dataList.options) {
+                if (option.value.toLowerCase() === val || option.text.toLowerCase().includes(val)) {
+                    const code = option.getAttribute('data-code');
+                    if (code) {
+                        countryCodeSelect.value = code;
+                        break;
+                    }
+                }
+            }
+        });
+        
+        countryCodeSelect.addEventListener('change', function() {
+            const selectedCode = this.value;
+            for (let option of dataList.options) {
+                if (option.getAttribute('data-code') === selectedCode) {
+                    countryInput.value = option.value;
+                    break;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card card-custom p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="feature-icon mx-auto mb-3" style="width: 54px; height: 54px; font-size: 1.4rem;">
+                        <i class="bi bi-person-plus"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Create an Account</h3>
+                    <p class="text-muted small">Join Atlas Tourism to explore and book dream holidays</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('auth.register') }}">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label for="full_name" class="form-label fw-semibold small">Full Name</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                                <input type="text" class="form-control border-start-0" id="full_name" name="full_name" 
+                                       value="{{ form_data.get('full_name', '') }}" placeholder="e.g. Rahul Sharma" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="username" class="form-label fw-semibold small">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-at text-muted"></i></span>
+                                <input type="text" class="form-control border-start-0" id="username" name="username" 
+                                       value="{{ form_data.get('username', '') }}" placeholder="rahul26" required>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="country_input" class="form-label fw-semibold small">Country / Region</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-globe-americas text-muted"></i></span>
+                                <input type="text" class="form-control border-start-0" id="country_input" name="country_name" 
+                                       list="country_options" placeholder="Select or type country (e.g. India, United States)" 
+                                       value="{{ form_data.get('country_name', 'India') }}" autocomplete="off" required>
+                                <datalist id="country_options">
+                                    {% for c in countries %}
+                                        <option value="{{ c.name }}" data-code="{{ c.code }}">{{ c.name }} ({{ c.code }})</option>
+                                    {% endfor %}
+                                </datalist>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="phone" class="form-label fw-semibold small">Phone Number</label>
+                            <div class="input-group">
+                                <select class="form-select bg-light fw-semibold" id="country_code" name="country_code" style="max-width: 140px;">
+                                    {% for c in countries %}
+                                        <option value="{{ c.code }}" {% if form_data.get('country_code', '+91') == c.code %}selected{% endif %}>
+                                            {{ c.code }} ({{ c.iso }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="{{ form_data.get('phone', '') }}" placeholder="e.g. 6901850478" required>
+                            </div>
+                            <span class="text-muted" style="font-size: 0.75rem;">Enter authentic phone without leading 0. Format verified automatically.</span>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="email" class="form-label fw-semibold small">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope text-muted"></i></span>
+                                <input type="email" class="form-control border-start-0" id="email" name="email" 
+                                       value="{{ form_data.get('email', '') }}" placeholder="name@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="reg-password" class="form-label fw-semibold small">Password</label>
+                            <div class="input-password-wrapper">
+                                <input type="password" class="form-control pe-5" id="reg-password" name="password" 
+                                       placeholder="Min 6 characters" minlength="6" required>
+                                <button type="button" class="password-toggle-btn" data-target="reg-password" title="Toggle visibility">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="reg-confirm-password" class="form-label fw-semibold small">Confirm Password</label>
+                            <div class="input-password-wrapper">
+                                <input type="password" class="form-control pe-5" id="reg-confirm-password" name="confirm_password" 
+                                       placeholder="Re-enter password" minlength="6" required>
+                                <button type="button" class="password-toggle-btn" data-target="reg-confirm-password" title="Toggle visibility">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                                Register Account <i class="bi bi-arrow-right ms-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-4 pt-3 text-center border-top">
+                    <p class="text-muted small mb-0">
+                        Already have an account? 
+                        <a href="{{ url_for('auth.login') }}" class="text-primary-custom fw-semibold text-decoration-none">Sign In Here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const countryInput = document.getElementById('country_input');
+    const countryCodeSelect = document.getElementById('country_code');
+    const dataList = document.getElementById('country_options');
+    
+    if (countryInput && countryCodeSelect && dataList) {
+        countryInput.addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase();
+            for (let option of dataList.options) {
+                if (option.value.toLowerCase() === val || option.text.toLowerCase().includes(val)) {
+                    const code = option.getAttribute('data-code');
+                    if (code) {
+                        countryCodeSelect.value = code;
+                        break;
+                    }
+                }
+            }
+        });
+        
+        countryCodeSelect.addEventListener('change', function() {
+            const selectedCode = this.value;
+            for (let option of dataList.options) {
+                if (option.getAttribute('data-code') === selectedCode) {
+                    countryInput.value = option.value;
+                    break;
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

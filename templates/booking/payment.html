@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment Checkout - Atlas Tourism{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container" style="max-width: 800px;">
+        <div class="card card-custom p-4 p-md-5 shadow-lg">
+            <div class="text-center mb-4">
+                <div class="rounded-circle bg-primary-light text-primary-custom d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                    <i class="bi bi-credit-card fs-2"></i>
+                </div>
+                <h3 class="fw-bold mb-1">Complete Your Payment</h3>
+                <p class="text-muted small">Atlas Tourism Secure Payment Gateway</p>
+            </div>
+
+            <!-- Booking Overview Card -->
+            <div class="bg-light p-4 rounded-4 mb-4 border">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <span class="text-muted small d-block">Booking Reference:</span>
+                        <span class="fw-bold text-dark fs-6">{{ booking.booking_number }}</span>
+                    </div>
+                    <div class="col-sm-6 text-sm-end">
+                        <span class="text-muted small d-block">Departure Date:</span>
+                        <span class="fw-semibold text-dark">{{ booking.travel_date }}</span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span class="text-muted small d-block">Tour Package:</span>
+                        <span class="fw-semibold text-dark">{{ booking.package_name }}</span>
+                    </div>
+                    <div class="col-sm-6 text-sm-end">
+                        <span class="text-muted small d-block">Party:</span>
+                        <span class="fw-semibold text-dark">{{ booking.adults_count }} Adults{% if booking.children_count %}, {{ booking.children_count }} Children{% endif %}</span>
+                    </div>
+                    <div class="col-12 pt-3 border-top d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="text-muted small d-block">Primary Traveller:</span>
+                            <span class="fw-semibold text-dark">{{ booking.contact_name }}</span>
+                        </div>
+                        <div class="text-end">
+                            <span class="text-muted small d-block">Total Amount Payable:</span>
+                            <h3 class="fw-bold text-primary-custom mb-0">₹{{ "{:,.2f}".format(booking.total_amount) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Options -->
+            {% if razorpay_enabled %}
+                <!-- Live Razorpay Test Mode Form -->
+                <div class="text-center my-4">
+                    <p class="text-muted small mb-3">Pay securely using Razorpay Gateway (UPI, Cards, NetBanking)</p>
+                    <button id="rzp-button" class="btn btn-primary btn-lg px-5 py-3 fw-bold rounded-pill shadow">
+                        <i class="bi bi-shield-lock-fill me-2"></i> Pay ₹{{ "{:,.2f}".format(booking.total_amount) }} with Razorpay
+                    </button>
+                </div>
+
+                <form action="{{ url_for('payment.callback') }}" method="POST" id="rzp-form" class="d-none">
+                    <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                    <input type="hidden" name="razorpay_payment_id" id="rzp-payment-id">
+                    <input type="hidden" name="razorpay_order_id" id="rzp-order-id">
+                    <input type="hidden" name="razorpay_signature" id="rzp-signature">
+                </form>
+
+                <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+                <script>
+                    var options = {
+                        "key": "{{ razorpay_key }}",
+                        "amount": "{{ amount_in_paise }}",
+                        "currency": "INR",
+                        "name": "Atlas Tourism",
+                        "description": "{{ booking.package_name }}",
+                        "image": "https://cdn-icons-png.flaticon.com/512/826/826070.png",
+                        "order_id": "{{ razorpay_order_id }}",
+                        "handler": function (response){
+                            document.getElementById('rzp-payment-id').value = response.razorpay_payment_id;
+                            document.getElementById('rzp-order-id').value = response.razorpay_order_id;
+                            document.getElementById('rzp-signature').value = response.razorpay_signature;
+                            document.getElementById('rzp-form').submit();
+                        },
+                        "prefill": {
+                            "name": "{{ booking.contact_name }}",
+                            "email": "{{ booking.contact_email }}",
+                            "contact": "{{ booking.contact_phone }}"
+                        },
+                        "theme": {
+                            "color": "#0d9488"
+                        }
+                    };
+                    var rzp1 = new Razorpay(options);
+                    document.getElementById('rzp-button').onclick = function(e){
+                        rzp1.open();
+                        e.preventDefault();
+                    }
+                </script>
+            {% endif %}
+
+            <!-- Academic Demo Payment Sandbox (Seamless offline / evaluator testing) -->
+            {% if demo_mode %}
+                <div class="card p-4 border rounded-4 bg-light mb-3 shadow-sm">
+                    <div class="d-flex align-items-center gap-2 mb-3 text-primary-custom">
+                        <i class="bi bi-shield-check fs-4"></i>
+                        <h5 class="fw-bold mb-0">Proceed To Pay</h5>
+                    </div>
+
+                    <form action="{{ url_for('payment.demo_process', booking_id=booking.id) }}" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-dark">Choose Payment Method</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white"><i class="bi bi-credit-card-2-front text-primary-custom"></i></span>
+                                <select name="demo_method" class="form-select" id="payment_method_select">
+                                    <option value="UPI (GooglePay / PhonePe / Paytm)">UPI (GooglePay / PhonePe / Paytm)</option>
+                                    <option value="Credit / Debit Card (Visa / MasterCard / RuPay)">Credit / Debit Card (Visa / MasterCard / RuPay)</option>
+                                    <option value="Net Banking (HDFC / SBI / ICICI / Axis)">Net Banking (HDFC / SBI / ICICI / Axis)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3 p-3 bg-white rounded-3 border">
+                            <input class="form-check-input ms-0 me-2" type="checkbox" id="agree_terms" name="agree_terms" required>
+                            <label class="form-check-label small text-dark fw-medium" for="agree_terms">
+                                I agree to the terms and booking conditions and authorize this payment.
+                            </label>
+                        </div>
+
+                        <button type="submit" id="btn-pay-now" class="btn btn-success w-100 py-3 fw-bold fs-6 rounded-3 shadow-sm" disabled>
+                            <i class="bi bi-lock-fill me-1"></i> Pay Now (₹{{ "{:,.2f}".format(booking.total_amount) }})
+                        </button>
+                    </form>
+                </div>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const agreeCheckbox = document.getElementById('agree_terms');
+                        const payBtn = document.getElementById('btn-pay-now');
+                        if (agreeCheckbox && payBtn) {
+                            agreeCheckbox.addEventListener('change', function() {
+                                payBtn.disabled = !this.checked;
+                            });
+                        }
+                    });
+                </script>
+            {% endif %}
+
+            <div class="text-center text-muted small mt-4">
+                <i class="bi bi-lock-fill text-success me-1"></i> All transactions are protected via 256-Bit SSL encryption. Raw credit/debit card numbers are never stored in the database.
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

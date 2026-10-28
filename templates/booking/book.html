@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+
+{% block title %}Book {{ package.name }} - Atlas Tourism{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='vendor/flatpickr/flatpickr.min.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="py-4 bg-white border-bottom">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3">
+            <a href="{{ url_for('packages.details', package_id=package.id) }}" class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <span class="text-primary-custom small fw-semibold text-uppercase">Tour Booking Checkout</span>
+                <h2 class="fw-bold mb-0 fs-3">{{ package.name }}</h2>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <form method="POST" id="booking-form">
+            <!-- Hidden inputs for live calculation transmission -->
+            <input type="hidden" id="calc-package-price" value="{{ package.price }}">
+            <input type="hidden" name="form_base_amount" id="form-base-amount" value="{{ package.price }}">
+            <input type="hidden" name="form_discount_amount" id="form-discount-amount" value="0.00">
+            <input type="hidden" name="form_total_amount" id="form-total-amount" value="{{ package.price }}">
+            <input type="hidden" name="offer_id" id="form-offer-id" value="">
+
+            <div class="row g-5">
+                <!-- Left Input Form Columns -->
+                <div class="col-lg-8">
+                    <!-- Step 1: Dates & Travellers -->
+                    <div class="card card-custom p-4 mb-4">
+                        <h4 class="fw-bold mb-3"><span class="badge rounded-circle bg-primary-custom text-white me-2">1</span> Trip Dates & Party Size</h4>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="travel_date" class="form-label fw-semibold small">Departure Travel Date *</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control custom-travel-date shadow-sm bg-white" id="travel_date" name="travel_date" placeholder="Select departure date" required>
+                                    <span class="input-group-text bg-white border-start-0 text-primary-custom" id="travel-date-picker-icon" style="cursor: pointer; border-radius: 0 12px 12px 0; border: 2px solid var(--border-color); border-left: none;">
+                                        <i class="bi bi-calendar3 fs-5"></i>
+                                    </span>
+                                </div>
+                                <span class="text-muted" style="font-size: 0.75rem;">Must be a future departure date.</span>
+                                <div class="invalid-feedback">Please select a future travel date.</div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="calc-adults" class="form-label fw-semibold small">Adults (12+ yrs) *</label>
+                                <input type="number" class="form-control" id="calc-adults" name="adults_count" min="1" max="20" value="1" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="calc-children" class="form-label fw-semibold small">Children (2-11 yrs)</label>
+                                <input type="number" class="form-control" id="calc-children" name="children_count" min="0" max="10" value="0">
+                                <span class="text-muted" style="font-size: 0.75rem;">60% of base fare</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Passenger Details (Dynamically Rendered by main.js) -->
+                    <div class="card card-custom p-4 mb-4">
+                        <h4 class="fw-bold mb-1"><span class="badge rounded-circle bg-primary-custom text-white me-2">2</span> Traveller Passenger Details</h4>
+                        <p class="text-muted small mb-3">Please provide full names matching government photo ID for permits and hotel check-in.</p>
+                        
+                        <div id="travellers-container">
+                            <!-- Populated dynamically by main.js -->
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Primary Contact & Special Preferences -->
+                    <div class="card card-custom p-4 mb-4">
+                        <h4 class="fw-bold mb-3"><span class="badge rounded-circle bg-primary-custom text-white me-2">3</span> Primary Contact Information</h4>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Full Name *</label>
+                                <input type="text" name="contact_name" class="form-control" value="{{ user.full_name }}" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Email Address (for voucher & ticket) *</label>
+                                <input type="email" name="contact_email" class="form-control" value="{{ user.email }}" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Mobile / WhatsApp Number *</label>
+                                <input type="tel" name="contact_phone" class="form-control" value="{{ user.phone or '' }}" required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold small">Special Requests (Optional)</label>
+                                <input type="text" name="special_requests" class="form-control" placeholder="Vegetarian meal, airport wheelchair, etc.">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Live Price Summary Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card card-custom p-4 sticky-top shadow-lg" style="top: 100px; z-index: 10;">
+                        <h5 class="fw-bold mb-3 border-bottom pb-2">Booking Summary</h5>
+
+                        <div class="d-flex gap-3 mb-3">
+                            <img src="{{ package.image_url }}" alt="{{ package.name }}" class="rounded-3 object-fit-cover" style="width: 70px; height: 70px;">
+                            <div class="overflow-hidden">
+                                <h6 class="fw-bold mb-0 text-truncate">{{ package.name }}</h6>
+                                <span class="small text-muted d-block"><i class="bi bi-clock"></i> {{ package.duration }}</span>
+                                <span class="small text-primary-custom fw-semibold"><i class="bi bi-geo-alt"></i> {{ package.destination_name }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Coupon Input -->
+                        <div class="mb-3 pt-2 border-top">
+                            <label class="form-label small fw-semibold text-muted">Have an Offer Code?</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <input type="text" id="calc-offer-code" class="form-control coupon-input text-uppercase flex-grow-1" placeholder="e.g. EXPLORE15">
+                                <button type="button" id="calc-apply-offer-btn" class="btn btn-outline-primary coupon-apply-btn fw-semibold">Apply</button>
+                            </div>
+                            <div id="calc-offer-feedback" class="small mt-1"></div>
+                            <span class="text-muted" style="font-size: 0.7rem;">Try demo code: <code>EXPLORE15</code> or <code>ATLASNEW</code></span>
+                        </div>
+
+                        <!-- Price Breakdown -->
+                        <ul class="list-group list-group-flush small mb-3 border-top pt-2">
+                            <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                                <span>Base Price per Adult:</span>
+                                <span class="fw-semibold">₹{{ "{:,.2f}".format(package.price) }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between px-0 py-2">
+                                <span>Subtotal (Travellers):</span>
+                                <span class="fw-semibold" id="calc-base-amount">₹{{ "{:,.2f}".format(package.price) }}</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between px-0 py-2 financial-discount text-danger">
+                                <span>Coupon Savings:</span>
+                                <span class="fw-semibold" id="calc-discount-amount">-₹0.00</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between px-0 py-3 border-top fw-bold fs-5 text-dark">
+                                <span>Total Amount:</span>
+                                <span class="text-primary-custom" id="calc-total-amount">₹{{ "{:,.2f}".format(package.price) }}</span>
+                            </li>
+                        </ul>
+
+                        <button type="submit" class="btn btn-accent w-100 py-3 fw-bold fs-6 shadow">
+                            Proceed to Payment <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
+
+                        <div class="text-center mt-3 text-muted" style="font-size: 0.75rem;">
+                            <i class="bi bi-shield-lock-fill text-success me-1"></i> 256-Bit SSL Encrypted & Secured Checkout
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='vendor/flatpickr/flatpickr.min.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const travelDateInput = document.getElementById('travel_date');
+    const pickerIcon = document.getElementById('travel-date-picker-icon');
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    let fpInstance = null;
+    if (travelDateInput) {
+        fpInstance = flatpickr(travelDateInput, {
+            dateFormat: "Y-m-d",
+            altInput: true,
+            altFormat: "d-m-Y",
+            altInputClass: "form-control custom-travel-date shadow-sm bg-white fw-semibold",
+            minDate: tomorrow,
+            defaultDate: tomorrow,
+            animate: true,
+            disableMobile: "true"
+        });
+    }
+
+    if (pickerIcon && fpInstance) {
+        pickerIcon.addEventListener('click', function() {
+            fpInstance.open();
+        });
+    }
+
+    // Enhanced form validation with visual feedback
+    const bookingForm = document.getElementById('booking-form');
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', function(e) {
+            // Check all required fields
+            const requiredFields = bookingForm.querySelectorAll('[required]');
+            let firstInvalid = null;
+            let allValid = true;
+
+            requiredFields.forEach(function(field) {
+                if (!field.value || !field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    allValid = false;
+                    if (!firstInvalid) firstInvalid = field;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+
+            // Validate travel date is in the future
+            if (travelDateInput && travelDateInput.value) {
+                const selectedDate = new Date(travelDateInput.value);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                if (selectedDate <= today) {
+                    travelDateInput.classList.add('is-invalid');
+                    allValid = false;
+                    if (!firstInvalid) firstInvalid = travelDateInput;
+                }
+            }
+
+            if (!allValid) {
+                e.preventDefault();
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
+                // Show a visible alert at the top
+                const existingAlert = document.getElementById('form-validation-alert');
+                if (existingAlert) existingAlert.remove();
+
+                const alertDiv = document.createElement('div');
+                alertDiv.id = 'form-validation-alert';
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show rounded-3 shadow-sm border-0';
+                alertDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill text-danger me-2"></i> Please fill in all required fields before proceeding to payment. <button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                
+                const container = bookingForm.closest('.container');
+                if (container) {
+                    container.insertBefore(alertDiv, container.firstChild);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+                return false;
+            }
+        });
+
+        // Remove invalid state on input
+        bookingForm.addEventListener('input', function(e) {
+            if (e.target.classList.contains('is-invalid')) {
+                e.target.classList.remove('is-invalid');
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

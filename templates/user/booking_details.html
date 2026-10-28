@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Booking Details - {{ booking.booking_number }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row g-3">
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            {% with active_page='bookings' %}
+                {% include 'user/_sidebar.html' %}
+            {% endwith %}
+        </div>
+
+        <!-- Booking Details View -->
+        <div class="col-lg-9">
+            <div class="card card-custom p-3 p-md-4">
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 border-bottom pb-3">
+                    <div>
+                        <span class="text-muted small">Booking Reference</span>
+                        <h3 class="fw-bold mb-0 text-dark">{{ booking.booking_number }}</h3>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        {% if booking.booking_status == 'Confirmed' %}
+                            <span class="badge bg-success fs-6 py-2 px-3"><i class="bi bi-check-circle me-1"></i> Confirmed</span>
+                        {% elif booking.booking_status == 'Completed' %}
+                            <span class="badge bg-info fs-6 py-2 px-3"><i class="bi bi-check-all me-1"></i> Completed</span>
+                        {% elif booking.booking_status == 'Cancelled' %}
+                            <span class="badge bg-danger fs-6 py-2 px-3"><i class="bi bi-x-circle me-1"></i> Cancelled</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark fs-6 py-2 px-3"><i class="bi bi-hourglass-split me-1"></i> Pending</span>
+                        {% endif %}
+
+                        <a href="{{ url_for('booking.confirmation', booking_id=booking.id) }}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-printer me-1"></i> Print Invoice
+                        </a>
+                        {% if booking.booking_status not in ['Completed', 'Cancelled'] %}
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-cancel-trip" data-action="{{ url_for('user.cancel_booking', booking_id=booking.id) }}" data-package="{{ booking.package_name }}">
+                            <i class="bi bi-x-circle me-1"></i> Cancel Trip
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Tour & Destination Summary -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-4">
+                        <img src="{{ booking.package_image }}" alt="{{ booking.package_name }}" class="img-fluid rounded-3 object-fit-cover w-100" style="height: 160px;">
+                    </div>
+                    <div class="col-md-8">
+                        <span class="badge bg-light text-primary-custom border fw-semibold mb-1">{{ booking.destination_name }}</span>
+                        <h4 class="fw-bold mb-2">{{ booking.package_name }}</h4>
+                        <div class="row g-2 small text-muted">
+                            <div class="col-sm-6">
+                                <i class="bi bi-calendar3 text-primary-custom me-1"></i> Travel Date: <strong class="text-dark">{{ booking.travel_date }}</strong>
+                            </div>
+                            <div class="col-sm-6">
+                                <i class="bi bi-clock text-primary-custom me-1"></i> Duration: <strong class="text-dark">{{ booking.package_duration }}</strong>
+                            </div>
+                            <div class="col-sm-6">
+                                <i class="bi bi-people text-primary-custom me-1"></i> Adults: <strong class="text-dark">{{ booking.adults_count }}</strong>
+                            </div>
+                            <div class="col-sm-6">
+                                <i class="bi bi-person-heart text-primary-custom me-1"></i> Children: <strong class="text-dark">{{ booking.children_count }}</strong>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <i class="bi bi-clock-history text-primary-custom me-1"></i> Booked On: {{ booking.created_at }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Traveller Passenger Roster -->
+                <h5 class="fw-bold mb-3"><i class="bi bi-people-fill text-primary-custom me-2"></i> Registered Travellers</h5>
+                <div class="table-responsive mb-3">
+                    <table class="table table-bordered align-middle small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>Traveller Full Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in travellers %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td class="fw-semibold">{{ t.full_name }}</td>
+                                <td>{{ t.age }} years</td>
+                                <td>{{ t.gender }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-muted text-center">Primary contact person travelling.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Primary Contact & Special Requests -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <h6 class="fw-bold mb-2">Primary Contact Details</h6>
+                            <p class="small text-muted mb-1"><strong>Name:</strong> {{ booking.contact_name }}</p>
+                            <p class="small text-muted mb-1"><strong>Email:</strong> {{ booking.contact_email }}</p>
+                            <p class="small text-muted mb-0"><strong>Phone:</strong> {{ booking.contact_phone }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <h6 class="fw-bold mb-2">Special Requests & Preferences</h6>
+                            <p class="small text-muted mb-0">
+                                {{ booking.special_requests if booking.special_requests else 'No specific dietary or accessibility requests recorded.' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <!-- Payment & Invoice Calculation Breakdown -->
+                <h5 class="fw-bold mb-3"><i class="bi bi-receipt text-primary-custom me-2"></i> Financial Breakdown</h5>
+                <div class="row justify-content-end">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush small">
+                            <li class="list-group-item d-flex justify-content-between py-2">
+                                <span>Base Package Charges:</span>
+                                <span>₹{{ "{:,.2f}".format(booking.base_amount) }}</span>
+                            </li>
+                            {% if booking.discount_amount > 0 %}
+                            <li class="list-group-item d-flex justify-content-between py-2 financial-discount text-danger">
+                                <span>Promotional Discount ({{ booking.offer_code }}):</span>
+                                <span>-₹{{ "{:,.2f}".format(booking.discount_amount) }}</span>
+                            </li>
+                            {% endif %}
+                            <li class="list-group-item d-flex justify-content-between py-2 border-top fw-bold fs-6 text-dark">
+                                <span>Grand Total Paid:</span>
+                                <span class="text-primary-custom">₹{{ "{:,.2f}".format(booking.total_amount) }}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                    <a href="{{ url_for('user.bookings') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left me-1"></i> Back to My Bookings
+                    </a>
+                    {% if booking.booking_status == 'Completed' %}
+                    <a href="{{ url_for('user.reviews') }}" class="btn btn-accent btn-sm">
+                        <i class="bi bi-star me-1"></i> Leave a Review
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

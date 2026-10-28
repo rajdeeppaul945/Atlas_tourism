@@ -1,0 +1,61 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Payment Records - Atlas Admin{% endblock %}
+{% block page_heading %}Payment Gateway Audit & Transactions{% endblock %}
+
+{% block admin_content %}
+<div class="card card-custom p-4 bg-white">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h5 class="fw-bold mb-0">Transaction Audit Log ({{ payments|length }})</h5>
+            <span class="text-muted small">Financial records processed through Razorpay Gateway & Test Sandbox. Raw credit/debit card numbers are strictly never captured.</span>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle small">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Payment ID</th>
+                    <th>Booking Ref</th>
+                    <th>Customer Name / Email</th>
+                    <th>Package</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for py in payments %}
+                <tr>
+                    <td>{{ py.id }}</td>
+                    <td><code>{{ py.razorpay_payment_id if py.razorpay_payment_id else 'N/A' }}</code></td>
+                    <td><strong>{{ py.booking_number }}</strong></td>
+                    <td>
+                        <span class="fw-semibold text-dark d-block">{{ py.user_name }}</span>
+                        <span class="text-muted" style="font-size: 0.75rem;">{{ py.user_email }}</span>
+                    </td>
+                    <td>{{ py.package_name }}</td>
+                    <td class="fw-bold text-success">₹{{ "{:,.2f}".format(py.amount) }}</td>
+                    <td><span class="badge bg-light text-dark border">{{ py.payment_method }}</span></td>
+                    <td>
+                        {% if py.payment_status == 'Success' %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle"><i class="bi bi-check-circle"></i> Success</span>
+                        {% else %}
+                            <span class="badge bg-warning-subtle text-warning border border-warning-subtle">{{ py.payment_status }}</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-muted">{{ py.created_at }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">No payment transactions recorded yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

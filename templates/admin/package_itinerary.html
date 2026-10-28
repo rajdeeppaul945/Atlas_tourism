@@ -1,0 +1,89 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Manage Itinerary - {{ package.name }}{% endblock %}
+{% block page_heading %}Package Itinerary Builder{% endblock %}
+
+{% block admin_content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <!-- Add Itinerary Day Form -->
+        <div class="card card-custom p-4 bg-white">
+            <h5 class="fw-bold mb-1">Add Itinerary Day</h5>
+            <p class="text-muted small mb-3">Target Tour: <strong>{{ package.name }}</strong></p>
+
+            <form method="POST" action="{{ url_for('admin.manage_itinerary', package_id=package.id) }}">
+                <input type="hidden" name="action" value="add_day">
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Day Number</label>
+                    <input type="number" name="day_number" class="form-control" value="{{ (itinerary|length) + 1 }}" min="1" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Day Title / Headline</label>
+                    <input type="text" name="title" class="form-control" placeholder="e.g. Scenic Mountain Drive & Monastery Blessing" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Day Description</label>
+                    <textarea name="description" class="form-control" rows="4" placeholder="Detail the route, transfers, sights, and schedule for the day..." required></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-semibold">Key Highlights & Activities (Optional)</label>
+                    <input type="text" name="activities" class="form-control" placeholder="e.g. Boating on lake, Photography at sunset point">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2">
+                    <i class="bi bi-plus-circle me-1"></i> Append Day to Itinerary
+                </button>
+            </form>
+        </div>
+
+        <div class="mt-3">
+            <a href="{{ url_for('admin.packages') }}" class="btn btn-outline-secondary btn-sm w-100">
+                <i class="bi bi-arrow-left me-1"></i> Back to Packages List
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <!-- Existing Itinerary Timeline Display -->
+        <div class="card card-custom p-4 bg-white">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="fw-bold mb-0">Current Schedule ({{ itinerary|length }} Days)</h5>
+                    <span class="text-muted small">{{ package.destination_name }} • {{ package.duration }}</span>
+                </div>
+                {% if itinerary %}
+                <form method="POST" action="{{ url_for('admin.manage_itinerary', package_id=package.id) }}" onsubmit="return confirm('Reset all days for this package?');">
+                    <input type="hidden" name="action" value="clear_all">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i> Clear All
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+            {% if itinerary %}
+                <div class="list-group list-group-flush">
+                    {% for item in itinerary %}
+                    <div class="list-group-item px-0 py-3 border-bottom">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span class="badge bg-primary-custom text-white fw-bold">Day {{ item.day_number }}</span>
+                            <h6 class="fw-bold mb-0 text-dark">{{ item.title }}</h6>
+                        </div>
+                        <p class="text-muted small mb-2" style="line-height: 1.7;">{{ item.description }}</p>
+                        {% if item.activities %}
+                        <div class="small text-secondary">
+                            <i class="bi bi-pin-angle text-primary-custom me-1"></i> <strong>Activities:</strong> {{ item.activities }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-calendar-plus display-4 d-block mb-3 text-muted"></i>
+                    <p class="mb-0">No days added yet. Use the form on the left to build the day-by-day itinerary.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Promotional Offers - Atlas Admin{% endblock %}
+{% block page_heading %}Promotional Discount Codes & Offers{% endblock %}
+
+{% block admin_content %}
+<div class="card card-custom p-4 bg-white mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h5 class="fw-bold mb-0">Active Coupon Codes ({{ offers|length }})</h5>
+            <span class="text-muted small">Discounts are calculated dynamically during the booking checkout flow.</span>
+        </div>
+        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addOfferModal">
+            <i class="bi bi-plus-lg me-1"></i> Create Offer Code
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle small">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Coupon Code</th>
+                    <th>Description</th>
+                    <th>Discount Rate</th>
+                    <th>Valid From</th>
+                    <th>Valid Until</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for o in offers %}
+                <tr>
+                    <td>{{ o.id }}</td>
+                    <td><span class="badge bg-light text-primary-custom border fw-bold fs-6">{{ o.code }}</span></td>
+                    <td class="text-muted">{{ o.description }}</td>
+                    <td class="fw-bold text-success fs-6">{{ o.discount_percent }}% OFF</td>
+                    <td>{{ o.valid_from }}</td>
+                    <td>{{ o.valid_until }}</td>
+                    <td>
+                        {% if o.is_active %}
+                            <span class="badge bg-success-subtle text-success border border-success-subtle">Active</span>
+                        {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary border">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1">
+                            <form action="{{ url_for('admin.toggle_offer', offer_id=o.id) }}" method="POST">
+                                <input type="hidden" name="is_active" value="{{ 0 if o.is_active else 1 }}">
+                                <button type="submit" class="btn btn-sm {% if o.is_active %}btn-outline-warning text-dark{% else %}btn-outline-success{% endif %} py-1 px-2" 
+                                        title="{% if o.is_active %}Disable Coupon{% else %}Activate Coupon{% endif %}">
+                                    {% if o.is_active %}
+                                        <i class="bi bi-pause-fill"></i> Disable
+                                    {% else %}
+                                        <i class="bi bi-play-fill"></i> Activate
+                                    {% endif %}
+                                </button>
+                            </form>
+                            <form action="{{ url_for('admin.delete_offer', offer_id=o.id) }}" method="POST" onsubmit="return confirm('Delete this offer code?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger py-1 px-2" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">No promotional offer codes created yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Create Offer Modal -->
+<div class="modal fade" id="addOfferModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ url_for('admin.create_offer') }}" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Create New Coupon Code</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Coupon Code *</label>
+                            <input type="text" name="code" class="form-control text-uppercase" placeholder="e.g. WINTER25" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Discount Percentage (%) *</label>
+                            <input type="number" name="discount_percent" class="form-control" min="1" max="90" placeholder="15" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Offer Title / Description</label>
+                            <input type="text" name="description" class="form-control" placeholder="Special winter holiday discount">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Valid From *</label>
+                            <input type="date" name="valid_from" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Valid Until *</label>
+                            <input type="date" name="valid_until" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="is_active" value="1" id="actCheck" checked>
+                                <label class="form-check-label small" for="actCheck">Activate offer immediately</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Coupon</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

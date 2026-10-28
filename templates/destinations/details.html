@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ destination.name }} - Atlas Tourism{% endblock %}
+
+{% block content %}
+<!-- Large Destination Hero Banner -->
+<section class="position-relative text-white destination-hero-banner" style="height: 480px; overflow: hidden;">
+    <img src="{{ destination.image_url }}" alt="{{ destination.name }}" class="w-100 h-100 object-fit-cover" style="filter: brightness(0.65);">
+    <div class="position-absolute bottom-0 start-0 w-100 p-4 p-md-5" style="background: linear-gradient(transparent 0%, rgba(15, 23, 42, 0.5) 40%, rgba(15, 23, 42, 0.95) 100%);">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+                <div>
+                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-bold text-uppercase mb-2">
+                        <i class="bi bi-geo-alt-fill me-1"></i> {{ destination.location }}
+                    </span>
+                    <h1 class="display-4 text-white mb-2" style="color: #ffffff !important; font-weight: 600 !important; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);">
+                        {{ destination.name }}
+                    </h1>
+                    <p class="lead mb-0 text-white" style="color: #ffffff !important; font-weight: 600 !important; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);">
+                        Starting from <strong class="text-white fw-bold">₹{{ "{:,.0f}".format(destination.starting_price) }}</strong> per traveller
+                    </p>
+                </div>
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    {% if session.get('user_id') %}
+                    <button class="btn btn-outline-light btn-wishlist-dest-toggle {% if in_wishlist %}active text-danger border-white bg-white{% endif %} px-3 py-2 fw-semibold" data-destination-id="{{ destination.id }}">
+                        <i class="bi {% if in_wishlist %}bi-heart-fill text-danger{% else %}bi-heart{% endif %} me-1"></i>
+                        <span>{% if in_wishlist %}Saved Destination{% else %}Wishlist Destination{% endif %}</span>
+                    </button>
+                    {% endif %}
+                    <a href="#available-packages" class="btn btn-primary px-4 py-2">
+                        <i class="bi bi-suitcase-lg me-1"></i> View Packages
+                    </a>
+                    <a href="{{ url_for('packages.index', destination_id=destination.id) }}" class="btn btn-accent px-4 py-2">
+                        <i class="bi bi-calendar-check me-1"></i> Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Destination Detailed Information -->
+<section class="py-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Left Overview Column -->
+            <div class="col-lg-8">
+                <!-- Overview -->
+                <div class="card card-custom p-4 p-md-5 mb-4">
+                    <h3 class="fw-bold mb-3">About {{ destination.name }}</h3>
+                    <p class="text-muted" style="line-height: 1.9; font-size: 1.05rem;">
+                        {{ destination.description }}
+                    </p>
+
+                    <hr class="my-4">
+
+                    <!-- Things to Do -->
+                    <h4 class="fw-bold mb-3"><i class="bi bi-compass text-primary-custom me-2"></i> Top Things to Do</h4>
+                    <p class="text-muted" style="line-height: 1.8;">
+                        {{ destination.things_to_do }}
+                    </p>
+
+                    <hr class="my-4">
+
+                    <!-- Popular Attractions -->
+                    <h4 class="fw-bold mb-3"><i class="bi bi-pin-map text-primary-custom me-2"></i> Popular Attractions & Sights</h4>
+                    <p class="text-muted" style="line-height: 1.8;">
+                        {{ destination.attractions }}
+                    </p>
+                </div>
+
+                <!-- Available Packages for this Destination -->
+                <div id="available-packages" class="pt-3">
+                    <h3 class="fw-bold mb-4">Available Tour Packages in {{ destination.name }}</h3>
+                    {% if packages %}
+                        <div class="row g-4">
+                            {% for pkg in packages %}
+                            <div class="col-md-6">
+                                <div class="card card-custom p-4 h-100 d-flex flex-column">
+                                    <h5 class="fw-bold mb-2">
+                                        <a href="{{ url_for('packages.details', package_id=pkg.id) }}" class="text-dark text-decoration-none">
+                                            {{ pkg.name }}
+                                        </a>
+                                    </h5>
+                                    <span class="badge bg-light text-primary-custom border w-auto align-self-start mb-3">
+                                        <i class="bi bi-clock me-1"></i> {{ pkg.duration if pkg.duration else 'Custom' }}
+                                    </span>
+                                    <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-auto">
+                                        <div>
+                                            <span class="text-muted small d-block">Starting from</span>
+                                            <span class="fw-bold fs-5 text-primary-custom">₹{{ "{:,.0f}".format(pkg.price) }}</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <a href="{{ url_for('packages.details', package_id=pkg.id) }}" class="btn btn-sm btn-outline-primary pkg-action-btn">View Details</a>
+                                            <a href="{{ url_for('booking.book', package_id=pkg.id) }}" class="btn btn-sm btn-accent pkg-action-btn">Book Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info rounded-3">
+                            <i class="bi bi-info-circle me-2"></i> We are currently curating new packages for {{ destination.name }}. Inquire with us directly for custom departures!
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Sidebar Meta Cards -->
+            <div class="col-lg-4">
+                <div class="card card-custom p-4 mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Trip Planning Highlights</h5>
+                    
+                    <div class="mb-3">
+                        <span class="text-muted small d-block"><i class="bi bi-calendar-event text-primary-custom me-1"></i> Best Time to Visit:</span>
+                        <span class="fw-semibold text-dark">{{ destination.best_time }}</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="text-muted small d-block"><i class="bi bi-wallet2 text-primary-custom me-1"></i> Approximate Budget:</span>
+                        <span class="fw-semibold text-dark">{{ destination.budget }}</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="text-muted small d-block"><i class="bi bi-geo-alt text-primary-custom me-1"></i> Region / State:</span>
+                        <span class="fw-semibold text-dark">{{ destination.location }}</span>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4 pt-2 border-top">
+                        <a href="{{ url_for('packages.index', destination_id=destination.id) }}" class="btn btn-accent py-2 fw-semibold">
+                            <i class="bi bi-calendar-check me-1"></i> Book Tour Package
+                        </a>
+                        <a href="{{ url_for('contact.contact') }}" class="btn btn-outline-primary py-2 fw-semibold">
+                            <i class="bi bi-chat-dots me-1"></i> Request Custom Quote
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 24/7 Guarantee Card -->
+                <div class="card card-custom p-4 bg-light border-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-shield-check text-primary-custom fs-2"></i>
+                        <div>
+                            <h6 class="fw-bold mb-1">Atlas Verified Safe Tour</h6>
+                            <p class="text-muted small mb-0">Certified hotels, verified sanitized transport, and native local guides.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

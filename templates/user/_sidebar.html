@@ -1,0 +1,39 @@
+<!-- User Account Sidebar Navigation -->
+<div class="dashboard-sidebar">
+    <div class="text-center pb-3 mb-3 border-bottom">
+        <div class="rounded-circle bg-primary-light text-primary-custom fw-bold d-inline-flex align-items-center justify-content-center fs-3 mb-2" style="width: 70px; height: 70px;">
+            {{ session.get('user_name', 'U')[:1] }}
+        </div>
+        <h5 class="fw-bold mb-0 text-dark">{{ session.get('user_name') }}</h5>
+                <div class="small text-muted">{{ session.get('user_email') }}</div>
+        {% if user and user.country %}
+            <div class="mt-2">
+                <span class="badge bg-light text-primary-custom border px-2 py-1 rounded-pill small">
+                    <i class="bi bi-geo-alt-fill me-1"></i>{{ user.country }}
+                </span>
+            </div>
+        {% endif %}
+    </div>
+
+    <nav class="nav flex-column">
+        <a class="nav-link {% if active_page == 'dashboard' %}active{% endif %}" href="{{ url_for('user.dashboard') }}">
+            <i class="bi bi-grid text-primary-custom fs-5"></i> Dashboard
+        </a>
+        <a class="nav-link {% if active_page == 'profile' %}active{% endif %}" href="{{ url_for('user.profile') }}">
+            <i class="bi bi-person-gear text-primary-custom fs-5"></i> My Profile
+        </a>
+        <a class="nav-link {% if active_page == 'bookings' %}active{% endif %}" href="{{ url_for('user.bookings') }}">
+            <i class="bi bi-journal-check text-primary-custom fs-5"></i> My Bookings
+        </a>
+        <a class="nav-link {% if active_page == 'wishlist' %}active{% endif %}" href="{{ url_for('user.wishlist') }}">
+            <i class="bi bi-heart text-danger fs-5"></i> Wishlist
+        </a>
+        <a class="nav-link {% if active_page == 'reviews' %}active{% endif %}" href="{{ url_for('user.reviews') }}">
+            <i class="bi bi-star text-warning fs-5"></i> My Reviews
+        </a>
+        <hr class="my-2">
+        <a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">
+            <i class="bi bi-box-arrow-right fs-5"></i> Logout
+        </a>
+    </nav>
+</div>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Atlas Tourism - Discover Your Next Adventure{% endblock %}</title>
+    
+    <!-- Google Fonts Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5.3 CSS & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Custom Application CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261028_1 }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- Main Navigation Bar -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url_for('home.index') }}">
+                     <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Atlas Tourism" class="site-logo"> 
+                </a>
+                
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 me-lg-3 gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'home.index' %}active{% endif %}" href="{{ url_for('home.index') }}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'contact.about' %}active{% endif %}" href="{{ url_for('contact.about') }}">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint and 'destination' in request.endpoint %}active{% endif %}" href="{{ url_for('destinations.index') }}">Destinations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint and 'package' in request.endpoint %}active{% endif %}" href="{{ url_for('packages.index') }}">Packages</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('home.index') }}#why-us">Why Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('home.index') }}#reviews">Reviews</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'contact.contact' %}active{% endif %}" href="{{ url_for('contact.contact') }}">Contact</a>
+                        </li>
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-2">
+                        {% if session.get('user_id') %}
+                            <!-- Logged In User Navigation -->
+                            {% if session.get('role') == 'admin' %}
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-outline-dark me-1">
+                                    <i class="bi bi-speedometer2 me-1"></i> Admin Panel
+                                </a>
+                            {% endif %}
+                            
+                            <a href="{{ url_for('user.wishlist') }}" class="btn btn-light wishlist-nav-btn position-relative rounded-circle text-secondary shadow-sm" title="My Wishlist">
+                                <i class="bi bi-heart fs-5"></i>
+                                <span id="wishlist-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-2 border-white" style="font-size: 0.72rem;">
+                                    {{ wishlist_count if wishlist_count is defined else 0 }}
+                                </span>
+                            </a>
+
+                            <div class="dropdown user-nav-dropdown">
+                                <button class="btn btn-light user-nav-btn dropdown-toggle rounded-pill px-3 fw-semibold shadow-sm" type="button" data-bs-toggle="dropdown">
+                                    <span class="d-flex align-items-center gap-2 overflow-hidden text-truncate me-1">
+                                        <i class="bi bi-person-circle text-primary-custom fs-5 flex-shrink-0"></i>
+                                        <span class="text-truncate">{{ session.get('user_name', 'Account') }}</span>
+                                    </span>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2">
+                                    <li><h6 class="dropdown-header text-muted">User Account</h6></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('user.dashboard') }}"><i class="bi bi-grid me-2 text-primary"></i> Dashboard</a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('user.profile') }}"><i class="bi bi-person-gear me-2 text-primary"></i> My Profile</a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('user.bookings') }}"><i class="bi bi-journal-check me-2 text-primary"></i> My Bookings</a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('user.wishlist') }}"><i class="bi bi-heart me-2 text-danger"></i> Wishlist</a></li>
+                                    <li><a class="dropdown-item py-2" href="{{ url_for('user.reviews') }}"><i class="bi bi-star me-2 text-warning"></i> My Reviews</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item py-2 text-danger fw-semibold" href="{{ url_for('auth.logout') }}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <!-- Guest Navigation -->
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary text-nowrap me-1">Login</a>
+                            <a href="{{ url_for('auth.register') }}" class="btn btn-primary text-nowrap me-2">Register</a>
+                        {% endif %}
+
+                        <a href="{{ url_for('packages.index') }}" class="btn btn-accent text-nowrap shadow-sm">
+                            <i class="bi bi-send-check me-1"></i> Book Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container with Top Padding for Fixed Navbar -->
+    <main style="padding-top: 76px;">
+        <!-- Flash Messages -->
+        <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 9999; margin-top: 80px; width: 100%; max-width: 600px;">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category != 'error' else 'danger' }} alert-dismissible fade show rounded-3 shadow-sm border-0" role="alert">
+                            <i class="bi {% if category == 'success' %}bi-check-circle-fill text-success{% elif category == 'danger' or category == 'error' %}bi-exclamation-triangle-fill text-danger{% else %}bi-info-circle-fill text-primary{% endif %} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <script>
+            (function() {
+                function autoDismissAlerts() {
+                    document.querySelectorAll('.alert.alert-dismissible').forEach(function(el) {
+                        if (el.dataset.autoDismissSet) return;
+                        el.dataset.autoDismissSet = 'true';
+                        setTimeout(function() {
+                            if (!document.body.contains(el)) return;
+                            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                            el.style.opacity = '0';
+                            el.style.transform = 'translateY(-12px)';
+                            setTimeout(function() {
+                                try {
+                                    if (window.bootstrap && window.bootstrap.Alert) {
+                                        var bsAlert = window.bootstrap.Alert.getOrCreateInstance(el);
+                                        if (bsAlert) { bsAlert.close(); return; }
+                                    }
+                                } catch(e) {}
+                                if (el.parentNode) el.parentNode.removeChild(el);
+                            }, 600);
+                        }, 3000); // 3 seconds auto-dismiss
+                    });
+                }
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', autoDismissAlerts);
+                } else {
+                    autoDismissAlerts();
+                }
+            })();
+        </script>
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-custom">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Brand Info -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="mb-2">
+                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Atlas Tourism Logo" class="site-logo-footer">
+                    </h5>
+                    <div class="footer-tagline">
+                        "A Seamless Journey Everywhere"
+                    </div>
+                    <p class="text-secondary small mt-2 pe-lg-4" style="line-height: 1.8;">
+                        Atlas Tourism is a premier experiential travel agency delivering memorable holiday packages across India and neighboring wonders. Committed to ethical tourism, transparent pricing, and 24/7 dedicated support.
+                    </p>
+                    <div class="d-flex align-items-center gap-3 mt-3">
+                        <a href="#" class="footer-social-btn" title="Facebook"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="footer-social-btn" title="Instagram"><i class="bi bi-instagram"></i></a>
+                        <a href="https://wa.me/916901850478" target="_blank" rel="noopener noreferrer" class="footer-social-btn" title="WhatsApp">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                        <a href="#" class="footer-social-btn" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-lg-2 col-md-6 col-6">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('home.index') }}"><i class="bi bi-chevron-right small me-1"></i> Home</a></li>
+                        <li><a href="{{ url_for('contact.about') }}"><i class="bi bi-chevron-right small me-1"></i> About Us</a></li>
+                        <li><a href="{{ url_for('destinations.index') }}"><i class="bi bi-chevron-right small me-1"></i> Destinations</a></li>
+                        <li><a href="{{ url_for('packages.index') }}"><i class="bi bi-chevron-right small me-1"></i> Tour Packages</a></li>
+                        <li><a href="{{ url_for('contact.faq') }}"><i class="bi bi-chevron-right small me-1"></i> FAQ</a></li>
+                        <li><a href="{{ url_for('contact.contact') }}"><i class="bi bi-chevron-right small me-1"></i> Contact Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Top Destinations -->
+                <div class="col-lg-3 col-md-6 col-6">
+                    <h5>Top Destinations</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('destinations.details', destination_id=1) }}"><i class="bi bi-geo-alt-fill text-primary-custom small me-1"></i> Nepal & Himalayas</a></li>
+                        <li><a href="{{ url_for('destinations.details', destination_id=2) }}"><i class="bi bi-geo-alt-fill text-primary-custom small me-1"></i> Darjeeling Hills</a></li>
+                        <li><a href="{{ url_for('destinations.details', destination_id=3) }}"><i class="bi bi-geo-alt-fill text-primary-custom small me-1"></i> Spiritual Varanasi</a></li>
+                        <li><a href="{{ url_for('destinations.details', destination_id=4) }}"><i class="bi bi-geo-alt-fill text-primary-custom small me-1"></i> Meghalaya & Shillong</a></li>
+                        <li><a href="{{ url_for('destinations.details', destination_id=5) }}"><i class="bi bi-geo-alt-fill text-primary-custom small me-1"></i> Andaman Islands</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="col-lg-3 col-md-6">
+                    <h5>Reach Us</h5>
+                    <ul class="list-unstyled text-secondary small">
+                        <li class="mb-3 d-flex align-items-start gap-2">
+                            <i class="bi bi-geo-alt text-primary-custom fs-5 mt-1"></i>
+                            <span>Atlas Tourism,First Floor, Paul Complex opposite of SBI Bank Dhubri Branch,Dhubri, Assam, Pin - 783324 </span>
+                        </li>
+                        <li class="mb-2 d-flex align-items-center gap-2">
+                            <i class="bi bi-telephone text-primary-custom fs-5"></i>
+                            <span>+91 6901850478 / (033) 2450-8900</span>
+                        </li>
+                        <li class="mb-2 d-flex align-items-center gap-2">
+                            <i class="bi bi-envelope text-primary-custom fs-5"></i>
+                            <span>infoatlastourism000@gmail.com</span>
+                        </li>
+                        <li class="d-flex align-items-center gap-2">
+                            <i class="bi bi-clock text-primary-custom fs-5"></i>
+                            <span>Mon - Sat: 9:00 AM - 8:00 PM</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p class="mb-0">&copy; {{ now_year if now_year else 2026 }} Atlas Tourism Ltd. All Rights Reserved. Developed and Managed by Rajdeep.</p>
+            </div>
+        </div>
+    </footer>
+
+        <!-- Cancel Trip Confirmation On-Screen Modal -->
+    <div class="modal fade" id="cancelTripModal" tabindex="-1" aria-labelledby="cancelTripModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+            <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="modal-body text-center p-4">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle mb-3" style="width: 60px; height: 60px;">
+                        <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2" id="cancelTripModalLabel">Cancel Trip</h5>
+                    <p class="text-secondary mb-1">Are you sure you want to cancel the trip?</p>
+                    <p class="small text-muted mb-4 fw-semibold" id="cancelTripPackageName" style="display: none;"></p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button type="button" class="btn btn-light border px-4 py-2 rounded-pill fw-medium" data-bs-dismiss="modal">Cancel</button>
+                        <form id="cancelTripConfirmForm" method="POST" action="" class="m-0 p-0">
+                            <button type="submit" class="btn btn-danger px-4 py-2 rounded-pill fw-semibold shadow-sm" id="cancelTripOkBtn">OK</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom Application JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}?v=20261028_3s"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
