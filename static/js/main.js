@@ -407,14 +407,23 @@ document.addEventListener('click', function(e) {
         if (preloader) {
             preloader.classList.remove('hide');
             if (hideTimer) clearTimeout(hideTimer);
-            // Safety timeout: auto-hide after 7 seconds if navigation takes unusually long or cancels
-            hideTimer = setTimeout(hidePlanePreloader, 7000);
+            // Safety timeout: auto-hide after 4 seconds
+            hideTimer = setTimeout(hidePlanePreloader, 4000);
         }
     }
 
-    // Dismiss preloader when page assets finish loading
+    // Dismiss preloader as soon as DOM content is ready (instant perceived loading)
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(hidePlanePreloader, 80);
+        });
+    } else {
+        setTimeout(hidePlanePreloader, 50);
+    }
+
+    // Also dismiss when full window finishes loading
     window.addEventListener('load', function() {
-        setTimeout(hidePlanePreloader, 280);
+        hidePlanePreloader();
     });
 
     // Dismiss when returning via browser back/forward buttons (bfcache)
@@ -422,16 +431,21 @@ document.addEventListener('click', function(e) {
         hidePlanePreloader();
     });
 
-    // Fallback: If DOM is fully interactive and window.load takes too long, dismiss after 1.5s
-    if (document.readyState === 'complete') {
-        setTimeout(hidePlanePreloader, 250);
-    } else {
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                if (document.readyState === 'complete') {
-                    hidePlanePreloader();
+    // Fallback maximum safety timer (800ms initial safety)
+    setTimeout(hidePlanePreloader, 800);
+
+    // Auto-close mobile navbar collapse when a link is clicked
+    const navbarCollapse = document.getElementById('navbarMain');
+    if (navbarCollapse) {
+        navbarCollapse.querySelectorAll('.nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (window.innerWidth < 992 && navbarCollapse.classList.contains('show')) {
+                    if (window.bootstrap && window.bootstrap.Collapse) {
+                        const bsCollapse = window.bootstrap.Collapse.getInstance(navbarCollapse);
+                        if (bsCollapse) bsCollapse.hide();
+                    }
                 }
-            }, 1500);
+            });
         });
     }
 
@@ -482,7 +496,7 @@ document.addEventListener('click', function(e) {
         showPlanePreloader();
     });
 
-    // Also trigger preloader on standard form submissions (login, register, search, booking, checkout)
+    // Also trigger preloader on standard form submissions
     document.addEventListener('submit', function(e) {
         const form = e.target;
         if (!form) return;

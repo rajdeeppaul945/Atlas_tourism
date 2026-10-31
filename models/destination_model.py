@@ -1,12 +1,22 @@
 """
 Destination Model - Data Access Object for destinations table.
+Optimized with in-memory TTL caching.
 """
 
+import time
 from utils.database import execute_query
+
+_destinations_cache = None
+_destinations_cache_time = 0
 
 class DestinationModel:
     @staticmethod
     def get_all():
+        global _destinations_cache, _destinations_cache_time
+        now = time.time()
+        if _destinations_cache is not None and (now - _destinations_cache_time) < 60:
+            return _destinations_cache
+
         sql = """
             SELECT d.*, COUNT(p.id) AS package_count 
             FROM destinations d
@@ -14,7 +24,10 @@ class DestinationModel:
             GROUP BY d.id
             ORDER BY d.name ASC
         """
-        return execute_query(sql, fetchall=True)
+        res = execute_query(sql, fetchall=True)
+        _destinations_cache = res
+        _destinations_cache_time = now
+        return res
 
     @staticmethod
     def get_by_id(destination_id):
@@ -36,6 +49,8 @@ class DestinationModel:
 
     @staticmethod
     def create(name, location, description, starting_price, best_time, things_to_do, attractions, budget, image_url):
+        global _destinations_cache
+        _destinations_cache = None
         sql = """
             INSERT INTO destinations 
             (name, location, description, starting_price, best_time, things_to_do, attractions, budget, image_url)
@@ -45,6 +60,8 @@ class DestinationModel:
 
     @staticmethod
     def update(destination_id, name, location, description, starting_price, best_time, things_to_do, attractions, budget, image_url):
+        global _destinations_cache
+        _destinations_cache = None
         sql = """
             UPDATE destinations 
             SET name = %s, location = %s, description = %s, starting_price = %s,
@@ -55,6 +72,8 @@ class DestinationModel:
 
     @staticmethod
     def delete(destination_id):
+        global _destinations_cache
+        _destinations_cache = None
         sql = "DELETE FROM destinations WHERE id = %s"
         return execute_query(sql, (destination_id,), commit=True)
 

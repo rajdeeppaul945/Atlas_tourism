@@ -1646,3 +1646,210 @@ span.flatpickr-weekday {
     font-weight: 500;
     letter-spacing: 0.2px;
 }
+
+
+/* =========================================================
+   RESPONSIVE MOBILE HEADER & OPTIMIZED USER DROPDOWN
+   ========================================================= */
+
+/* Header action group */
+.header-nav-actions {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+/* Nav Action Buttons */
+.btn-nav-auth {
+    font-size: 0.82rem !important;
+    padding: 0.35rem 0.7rem !important;
+    font-weight: 500 !important;
+    border-radius: 9px !important;
+    line-height: 1.25 !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-nav-book {
+    font-size: 0.84rem !important;
+    padding: 0.38rem 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 9px !important;
+    line-height: 1.25 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-nav-book:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25) !important;
+}
+
+/* Optimized Mobile & Desktop Profile Dropdown */
+.user-custom-dropdown {
+    min-width: 220px !important;
+    max-width: 260px !important;
+    border-radius: 14px !important;
+    padding: 0.35rem 0 !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    animation: dropdownSmoothFade 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transform-origin: top right !important;
+    right: 0 !important;
+    left: auto !important;
+}
+
+@keyframes dropdownSmoothFade {
+    0% {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.97);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-header-custom {
+    background: #f8fafc !important;
+    margin-bottom: 0.25rem !important;
+}
+
+/* Scrollable Container with sleek custom scrollbar */
+.dropdown-scroll-container {
+    max-height: min(290px, 65vh) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding: 0.2rem 0 0.5rem 0 !important;
+}
+
+.dropdown-scroll-container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.dropdown-scroll-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.dropdown-scroll-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.dropdown-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.user-custom-dropdown .dropdown-item {
+    font-size: 0.83rem !important;
+    padding: 0.45rem 1rem !important;
+    border-radius: 7px !important;
+    margin: 1px 6px !important;
+    width: calc(100% - 12px) !important;
+    transition: all 0.16s ease !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.user-custom-dropdown .dropdown-item:hover,
+.user-custom-dropdown .dropdown-item:active {
+    background-color: #f1f5f9 !important;
+    color: var(--primary) !important;
+    transform: translateX(2px);
+}
+
+.user-custom-dropdown .dropdown-item i {
+    font-size: 0.95rem !important;
+}
+
+/* Mobile Specific Header Refinements */
+@media (max-width: 991.98px) {
+    .navbar-custom {
+        padding: 0.45rem 0.5rem !important;
+    }
+
+    .site-logo {
+        max-height: 34px !important;
+        width: auto !important;
+    }
+
+    .navbar-collapse {
+        background: #ffffff !important;
+        padding: 0.85rem 1.25rem !important;
+        border-radius: 14px !important;
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08) !important;
+        margin-top: 0.6rem !important;
+        border: 1px solid #e2e8f0 !important;
+    }
+
+    .navbar-nav .nav-link {
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 8px !important;
+        font-weight: 500 !important;
+    }
+
+    .navbar-nav .nav-link.active {
+        background: #f1f5f9 !important;
+    }
+
+    /* Mobile hero background image optimization */
+    .hero-section {
+        background: linear-gradient(rgba(15, 23, 42, 0.65), rgba(15, 23, 42, 0.75)),
+                    url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=75') center/cover no-repeat !important;
+        padding: 100px 0 60px 0 !important;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .site-logo {
+        max-height: 30px !important;
+    }
+
+    .header-nav-actions {
+        gap: 0.25rem !important;
+    }
+
+    .btn-nav-auth {
+        font-size: 0.75rem !important;
+        padding: 0.26rem 0.46rem !important;
+        border-radius: 6px !important;
+    }
+
+    .btn-nav-book {
+        font-size: 0.76rem !important;
+        padding: 0.28rem 0.52rem !important;
+        border-radius: 6px !important;
+    }
+
+    .wishlist-nav-btn {
+        width: 32px !important;
+        height: 32px !important;
+        padding: 0 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    .user-nav-btn {
+        padding: 0.26rem 0.48rem !important;
+        font-size: 0.78rem !important;
+    }
+
+    .navbar-toggler {
+        padding: 0.2rem 0.4rem !important;
+        font-size: 1.15rem !important;
+    }
+}
+
+.user-name-label {
+    max-width: 140px !important;
+}
+
+@media (max-width: 768px) {
+    .user-name-label {
+        max-width: 90px !important;
+    }
+}

@@ -5,7 +5,7 @@ Full-stack tourism and travel booking web platform.
 
 import os
 from datetime import datetime
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, g
 from config import Config
 
 def create_app():
@@ -43,6 +43,19 @@ def create_app():
             'now_year': datetime.now().year,
             'wishlist_count': wishlist_count
         }
+
+    # Teardown handler to close request-scoped database connection cleanly
+    @app.teardown_appcontext
+    def close_db_connection(exception=None):
+        conn = getattr(g, '_db_conn', None)
+        if conn is not None:
+            try:
+                if hasattr(conn, 'closed') and not conn.closed:
+                    conn.close()
+                elif hasattr(conn, 'open') and conn.open:
+                    conn.close()
+            except Exception:
+                pass
 
     # Register Blueprint Modules
     from routes.auth_routes import auth_bp

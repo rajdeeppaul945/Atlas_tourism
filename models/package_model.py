@@ -1,8 +1,12 @@
 """
 Package Model - Data Access Object for packages and package_itinerary tables.
+Optimized with in-memory TTL caching.
 """
 
+import time
 from utils.database import execute_query
+
+_featured_packages_cache = {}
 
 class PackageModel:
     @staticmethod
@@ -48,6 +52,12 @@ class PackageModel:
 
     @staticmethod
     def get_featured(limit=6):
+        global _featured_packages_cache
+        now = time.time()
+        cached = _featured_packages_cache.get(limit)
+        if cached and (now - cached['time']) < 60:
+            return cached['data']
+
         sql = """
             SELECT p.*, d.name AS destination_name, d.location AS destination_location,
                    COALESCE(AVG(r.rating), 5.0) AS avg_rating,
@@ -60,7 +70,9 @@ class PackageModel:
             ORDER BY p.id ASC
             LIMIT %s
         """
-        return execute_query(sql, (limit,), fetchall=True)
+        data = execute_query(sql, (limit,), fetchall=True)
+        _featured_packages_cache[limit] = {'data': data, 'time': now}
+        return data
 
     @staticmethod
     def get_by_id(package_id):
@@ -98,6 +110,8 @@ class PackageModel:
 
     @staticmethod
     def create(destination_id, name, duration, duration_days, price, hotel_info, transport_info, meals_info, description, inclusions, exclusions, available_dates, image_url, is_featured=False):
+        global _featured_packages_cache
+        _featured_packages_cache.clear()
         sql = """
             INSERT INTO packages 
             (destination_id, name, duration, duration_days, price, hotel_info, transport_info, meals_info, description, inclusions, exclusions, available_dates, image_url, is_featured)
@@ -107,6 +121,8 @@ class PackageModel:
 
     @staticmethod
     def update(package_id, destination_id, name, duration, duration_days, price, hotel_info, transport_info, meals_info, description, inclusions, exclusions, available_dates, image_url, is_featured):
+        global _featured_packages_cache
+        _featured_packages_cache.clear()
         sql = """
             UPDATE packages 
             SET destination_id = %s, name = %s, duration = %s, duration_days = %s, price = %s,
@@ -118,6 +134,8 @@ class PackageModel:
 
     @staticmethod
     def delete(package_id):
+        global _featured_packages_cache
+        _featured_packages_cache.clear()
         sql = "DELETE FROM packages WHERE id = %s"
         return execute_query(sql, (package_id,), commit=True)
 

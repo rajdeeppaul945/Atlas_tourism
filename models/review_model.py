@@ -1,12 +1,18 @@
 """
 Review Model - Data Access Object for package reviews.
+Optimized with in-memory TTL caching.
 """
 
+import time
 from utils.database import execute_query
+
+_featured_reviews_cache = {}
 
 class ReviewModel:
     @staticmethod
     def create(user_id, package_id, booking_id, rating, review_text, is_approved=True):
+        global _featured_reviews_cache
+        _featured_reviews_cache.clear()
         sql = """
             INSERT INTO reviews (user_id, package_id, booking_id, rating, review_text, is_approved)
             VALUES (%s, %s, %s, %s, %s, %s)
@@ -26,6 +32,12 @@ class ReviewModel:
 
     @staticmethod
     def get_featured_reviews(limit=6):
+        global _featured_reviews_cache
+        now = time.time()
+        cached = _featured_reviews_cache.get(limit)
+        if cached and (now - cached['time']) < 60:
+            return cached['data']
+
         sql = """
             SELECT r.*, u.full_name AS user_name, p.name AS package_name, d.name AS destination_name
             FROM reviews r
@@ -36,7 +48,9 @@ class ReviewModel:
             ORDER BY r.rating DESC, r.created_at DESC
             LIMIT %s
         """
-        return execute_query(sql, (limit,), fetchall=True)
+        data = execute_query(sql, (limit,), fetchall=True)
+        _featured_reviews_cache[limit] = {'data': data, 'time': now}
+        return data
 
     @staticmethod
     def get_user_reviews(user_id):
@@ -64,11 +78,15 @@ class ReviewModel:
 
     @staticmethod
     def approve(review_id):
+        global _featured_reviews_cache
+        _featured_reviews_cache.clear()
         sql = "UPDATE reviews SET is_approved = TRUE WHERE id = %s"
         return execute_query(sql, (review_id,), commit=True)
 
     @staticmethod
     def delete(review_id):
+        global _featured_reviews_cache
+        _featured_reviews_cache.clear()
         sql = "DELETE FROM reviews WHERE id = %s"
         return execute_query(sql, (review_id,), commit=True)
 
