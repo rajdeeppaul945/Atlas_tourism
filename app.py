@@ -75,22 +75,11 @@ def create_app():
     # Global HTTP Error Handlers
     @app.errorhandler(404)
     def page_not_found(e):
-        from flask import request, make_response
-        debug_info = f"Requested URL: {request.url} | Path: {request.path} | PATH_INFO: {request.environ.get('PATH_INFO')} | SCRIPT_NAME: {request.environ.get('SCRIPT_NAME')}"
-        resp = make_response(render_template('errors/404.html'), 404)
-        resp.headers['X-Debug-Info'] = debug_info
-        return resp
+        return render_template('errors/404.html'), 404
 
     @app.errorhandler(500)
     def internal_server_error(e):
-        import traceback
-        from flask import make_response
-        tb_msg = traceback.format_exc()
-        resp = make_response(render_template('errors/500.html'), 500)
-        resp.headers['X-Error-Message'] = str(e)[:250]
-        lines = traceback.format_exc().strip().splitlines()
-        resp.headers['X-Error-Trace'] = " || ".join(lines[-6:])[:400]
-        return resp
+        return render_template('errors/500.html'), 500
 
     @app.errorhandler(403)
     def forbidden_error(e):

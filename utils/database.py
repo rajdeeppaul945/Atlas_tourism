@@ -13,9 +13,25 @@ def get_db_connection():
     Otherwise falls back to local MySQL.
     """
     if Config.SUPABASE_DB_URL:
+        import re
         import psycopg2
         from psycopg2.extras import RealDictCursor
-        return psycopg2.connect(Config.SUPABASE_DB_URL, cursor_factory=RealDictCursor)
+
+        db_url = Config.SUPABASE_DB_URL
+
+        # Automatically translate direct Supabase URL to IPv4 connection pooler on Vercel/serverless
+        # to avoid AWS Lambda IPv6 "Network is unreachable" errors
+        m = re.search(r'db\.([a-z0-9]+)\.supabase\.co', db_url)
+        if m:
+            project_ref = m.group(1)
+            pooler_url = re.sub(r'db\.[a-z0-9]+\.supabase\.co:\d+', 'aws-0-eu-west-1.pooler.supabase.com:6543', db_url)
+            pooler_url = re.sub(r'://postgres:', f'://postgres.{project_ref}:', pooler_url)
+            try:
+                return psycopg2.connect(pooler_url, cursor_factory=RealDictCursor, connect_timeout=10)
+            except Exception as pool_err:
+                print(f"[Supabase Pooler Warning]: {pool_err}. Trying direct URL.")
+
+        return psycopg2.connect(db_url, cursor_factory=RealDictCursor, connect_timeout=15)
     else:
         import pymysql
         import pymysql.cursors
