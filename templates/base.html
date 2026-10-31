@@ -20,6 +20,34 @@
 </head>
 <body>
 
+    <!-- Atlas Moving Airplane Preloader Overlay -->
+    <div class="atlas-plane-preloader" id="atlas-preloader">
+        <div class="plane-stage">
+            <div class="cloud-container">
+                <div class="cloud cloud-1"></div>
+                <div class="cloud cloud-2"></div>
+            </div>
+
+            <div class="speed-trails">
+                <div class="speed-line line-1"></div>
+                <div class="speed-line line-2"></div>
+                <div class="speed-line line-3"></div>
+            </div>
+
+            <div class="plane-wrapper">
+                <img src="{{ url_for('static', filename='images/airplane_loader.png') }}" alt="Atlas Tourism Flight">
+            </div>
+        </div>
+
+        <div class="loader-content">
+            <div class="loader-title">
+                <span>Taking you to your destination</span>
+                <span class="loader-dots"><span>.</span><span>.</span><span>.</span></span>
+            </div>
+            <div class="loader-subtitle">Atlas Tourism • A Seamless Journey Everywhere</div>
+        </div>
+    </div>
+
     <!-- Main Navigation Bar -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-custom fixed-top">

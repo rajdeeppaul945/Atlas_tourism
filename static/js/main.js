@@ -386,3 +386,109 @@ document.addEventListener('click', function(e) {
         }
     }
 });
+
+
+// =========================================================
+// ATLAS MOVING AIRPLANE PRELOADER & TAB TRANSITION CONTROLLER
+// =========================================================
+(function() {
+    const preloader = document.getElementById('atlas-preloader');
+    if (!preloader) return;
+
+    let hideTimer = null;
+
+    function hidePlanePreloader() {
+        if (preloader) {
+            preloader.classList.add('hide');
+        }
+    }
+
+    function showPlanePreloader() {
+        if (preloader) {
+            preloader.classList.remove('hide');
+            if (hideTimer) clearTimeout(hideTimer);
+            // Safety timeout: auto-hide after 7 seconds if navigation takes unusually long or cancels
+            hideTimer = setTimeout(hidePlanePreloader, 7000);
+        }
+    }
+
+    // Dismiss preloader when page assets finish loading
+    window.addEventListener('load', function() {
+        setTimeout(hidePlanePreloader, 280);
+    });
+
+    // Dismiss when returning via browser back/forward buttons (bfcache)
+    window.addEventListener('pageshow', function() {
+        hidePlanePreloader();
+    });
+
+    // Fallback: If DOM is fully interactive and window.load takes too long, dismiss after 1.5s
+    if (document.readyState === 'complete') {
+        setTimeout(hidePlanePreloader, 250);
+    } else {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                if (document.readyState === 'complete') {
+                    hidePlanePreloader();
+                }
+            }, 1500);
+        });
+    }
+
+    // Intercept internal page and tab navigation to display moving airplane animation
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+        if (!href) return;
+
+        // Ignore hash, javascript, tel, and mailto links
+        if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+            return;
+        }
+
+        // Ignore new tabs or downloads
+        if (link.target === '_blank' || link.hasAttribute('download')) {
+            return;
+        }
+
+        // Ignore Bootstrap dropdowns and modals
+        if (link.getAttribute('data-bs-toggle') || link.getAttribute('data-bs-target')) {
+            return;
+        }
+
+        // Ignore cancel trip modal triggers
+        if (link.classList.contains('btn-cancel-trip')) {
+            return;
+        }
+
+        // Ignore modifier keys (Cmd/Ctrl clicks open in background tab)
+        if (e.ctrlKey || e.metaKey || e.shiftKey) {
+            return;
+        }
+
+        // Ignore in-page hash anchors (e.g. /#why-us when already on /)
+        try {
+            const targetUrl = new URL(link.href, window.location.origin);
+            if (targetUrl.origin === window.location.origin &&
+                targetUrl.pathname === window.location.pathname &&
+                targetUrl.hash) {
+                return;
+            }
+        } catch (err) {}
+
+        // Valid internal navigation link: show moving airplane preloader
+        showPlanePreloader();
+    });
+
+    // Also trigger preloader on standard form submissions (login, register, search, booking, checkout)
+    document.addEventListener('submit', function(e) {
+        const form = e.target;
+        if (!form) return;
+        if (form.target === '_blank') return;
+        if (e.defaultPrevented) return;
+
+        showPlanePreloader();
+    });
+})();
