@@ -20,9 +20,12 @@ class Config:
     RAZORPAY_KEY_SECRET = os.getenv('RAZORPAY_KEY_SECRET', '')
     DEMO_PAYMENT_MODE = os.getenv('DEMO_PAYMENT_MODE', 'True').lower() in ('true', '1', 'yes')
     
-    # Upload Folder
+    # Upload Folder (Supports Vercel Serverless /tmp directory)
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
+    if os.environ.get('VERCEL') or os.environ.get('AWS_LAMBDA_FUNCTION_NAME'):
+        UPLOAD_FOLDER = '/tmp/uploads'
+    else:
+        UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max upload size
     
     # Session Security

@@ -9,11 +9,19 @@ from flask import Flask, render_template, session
 from config import Config
 
 def create_app():
-    app = Flask(__name__)
+    root_path = os.path.abspath(os.path.dirname(__file__))
+    app = Flask(
+        __name__,
+        template_folder=os.path.join(root_path, 'templates'),
+        static_folder=os.path.join(root_path, 'static')
+    )
     app.config.from_object(Config)
 
-    # Ensure upload directory exists
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    # Ensure upload directory exists safely
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    except Exception as err:
+        print(f"[Upload Folder Warning]: {err}")
 
     # Register Custom Jinja2 Template Filters
     from utils.helpers import format_currency, format_date
