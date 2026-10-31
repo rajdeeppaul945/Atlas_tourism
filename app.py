@@ -83,7 +83,13 @@ def create_app():
 
     @app.errorhandler(500)
     def internal_server_error(e):
-        return render_template('errors/500.html'), 500
+        import traceback
+        from flask import make_response
+        tb_msg = traceback.format_exc()
+        resp = make_response(render_template('errors/500.html'), 500)
+        resp.headers['X-Error-Message'] = str(e)[:250]
+        resp.headers['X-Error-Trace'] = tb_msg.replace('\n', ' || ')[:400]
+        return resp
 
     @app.errorhandler(403)
     def forbidden_error(e):
