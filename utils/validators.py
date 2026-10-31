@@ -137,3 +137,18 @@ def validate_phone_authenticity(phone_number: str, country_code: str = "+91"):
         return True, "", formatted
     except Exception as e:
         return False, f"Invalid phone number format: {str(e)}", ""
+
+
+def validate_name_authenticity(name: str):
+
+    if not name or not name.strip():
+        return False, "Full name is required."
+
+    clean_name = name.strip()
+    if len(clean_name) < 2:
+        return False, "Full name must be at least 2 characters long."
+
+    if not re.match(r'^[A-Za-z\s]+$', clean_name):
+        return False, "Full name must only contain alphabetic letters and spaces (numbers or special characters are not allowed)."
+
+    return True, ""

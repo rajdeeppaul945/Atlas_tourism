@@ -43,7 +43,7 @@ class PackageModel:
             term = f"%{search}%"
             params.extend([term, term, term])
 
-        sql += " GROUP BY p.id ORDER BY p.is_featured DESC, p.created_at DESC"
+        sql += " GROUP BY p.id, d.id ORDER BY p.is_featured DESC, p.created_at DESC"
         return execute_query(sql, tuple(params), fetchall=True)
 
     @staticmethod
@@ -56,7 +56,7 @@ class PackageModel:
             JOIN destinations d ON p.destination_id = d.id
             LEFT JOIN reviews r ON p.id = r.package_id AND r.is_approved = TRUE
             WHERE p.is_featured = TRUE
-            GROUP BY p.id
+            GROUP BY p.id, d.id
             ORDER BY p.id ASC
             LIMIT %s
         """
@@ -72,7 +72,7 @@ class PackageModel:
             JOIN destinations d ON p.destination_id = d.id
             LEFT JOIN reviews r ON p.id = r.package_id AND r.is_approved = TRUE
             WHERE p.id = %s
-            GROUP BY p.id
+            GROUP BY p.id, d.id
         """
         return execute_query(sql, (package_id,), fetchone=True)
 

@@ -1,0 +1,11 @@
+.env
+.git
+.gitignore
+__pycache__
+*/__pycache__
+scratch
+*.png
+*.pdf
+.vscode
+.idea
+supabase_migration.sql

@@ -9,7 +9,7 @@ from models.booking_model import BookingModel
 from models.wishlist_model import WishlistModel
 from models.review_model import ReviewModel
 from models.package_model import PackageModel
-from utils.validators import validate_email_authenticity, validate_phone_authenticity, COUNTRY_LIST
+from utils.validators import validate_email_authenticity, validate_phone_authenticity, validate_name_authenticity, COUNTRY_LIST
 from utils.auth import login_required, verify_password
 
 user_bp = Blueprint('user', __name__, url_prefix='/user')
@@ -57,6 +57,12 @@ def profile():
 
             if not all([full_name, email, phone]):
                 flash('All profile fields are required.', 'danger')
+                return render_template('user/profile.html', user=user, countries=COUNTRY_LIST)
+
+            # Full Name verification
+            is_name_valid, name_err = validate_name_authenticity(full_name)
+            if not is_name_valid:
+                flash(name_err, 'danger')
                 return render_template('user/profile.html', user=user, countries=COUNTRY_LIST)
 
             # Authentic Email verification

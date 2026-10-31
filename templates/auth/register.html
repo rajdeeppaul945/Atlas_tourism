@@ -54,7 +54,11 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
                                 <input type="text" class="form-control border-start-0" id="full_name" name="full_name" 
-                                       value="{{ form_data.get('full_name', '') }}" placeholder="e.g. Rahul Sharma" required>
+                                       value="{{ form_data.get('full_name', '') }}" placeholder="e.g. Rahul Sharma"
+                                       pattern="^[A-Za-z\s]{2,}$"
+                                       title="Full name must only contain letters and spaces (minimum 2 characters)"
+                                       oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
+                                       required>
                             </div>
                         </div>
 
@@ -93,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     {% endfor %}
                                 </select>
                                 <input type="tel" class="form-control" id="phone" name="phone" 
-                                       value="{{ form_data.get('phone', '') }}" placeholder="e.g. 6901850478" required>
+                                       value="{{ form_data.get('phone', '') }}" placeholder="e.g. 7739664552" required>
                             </div>
                             <span class="text-muted" style="font-size: 0.75rem;">Enter authentic phone without leading 0. Format verified automatically.</span>
                         </div>

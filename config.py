@@ -7,7 +7,8 @@ load_dotenv()
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'atlas_tourism_default_secret_key_2026')
     
-    # MySQL Database Settings
+    # Database Settings (Supports Supabase PostgreSQL & Local MySQL)
+    SUPABASE_DB_URL = os.getenv('SUPABASE_DB_URL', '')
     MYSQL_HOST = os.getenv('MYSQL_HOST', 'localhost')
     MYSQL_PORT = int(os.getenv('MYSQL_PORT', 3306))
     MYSQL_USER = os.getenv('MYSQL_USER', 'root')

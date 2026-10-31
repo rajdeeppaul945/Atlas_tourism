@@ -5,7 +5,7 @@ Handles user registration, login, logout, and password recovery.
 
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from models.user_model import UserModel
-from utils.validators import validate_email_authenticity, validate_phone_authenticity, COUNTRY_LIST
+from utils.validators import validate_email_authenticity, validate_phone_authenticity, validate_name_authenticity, COUNTRY_LIST
 from utils.email_service import send_password_reset_email
 import re
 
@@ -29,6 +29,12 @@ def register():
         # Basic validations
         if not all([full_name, username, email, phone, password, confirm_password]):
             flash('All fields are required.', 'danger')
+            return render_template('auth/register.html', form_data=request.form, countries=COUNTRY_LIST)
+
+        # Full Name verification (must contain only alphabetic characters and spaces)
+        is_name_valid, name_err = validate_name_authenticity(full_name)
+        if not is_name_valid:
+            flash(name_err, 'danger')
             return render_template('auth/register.html', form_data=request.form, countries=COUNTRY_LIST)
 
         # Authentic Email verification (valid format, no disposable/fake domains, live MX lookup)

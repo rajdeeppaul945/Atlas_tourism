@@ -42,7 +42,7 @@ class WishlistModel:
             JOIN destinations d ON p.destination_id = d.id
             LEFT JOIN reviews r ON p.id = r.package_id AND r.is_approved = TRUE
             WHERE w.user_id = %s
-            GROUP BY w.id, p.id
+            GROUP BY w.id, p.id, d.id
             ORDER BY w.created_at DESC
         """
         return execute_query(sql, (user_id,), fetchall=True)
