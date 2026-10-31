@@ -10,6 +10,25 @@ if root_dir not in sys.path:
 
 try:
     from app import app
+
+    # WSGI Middleware to handle Vercel serverless path routing
+    class VercelPathMiddleware:
+        def __init__(self, wsgi_app):
+            self.wsgi_app = wsgi_app
+
+        def __call__(self, environ, start_response):
+            path_info = environ.get('PATH_INFO', '')
+            # If Vercel rewrote request to /api/index, strip the prefix
+            if path_info.startswith('/api/index'):
+                remainder = path_info[len('/api/index'):]
+                environ['PATH_INFO'] = remainder if remainder else '/'
+            elif path_info.startswith('/api'):
+                remainder = path_info[len('/api'):]
+                environ['PATH_INFO'] = remainder if remainder else '/'
+            return self.wsgi_app(environ, start_response)
+
+    app.wsgi_app = VercelPathMiddleware(app.wsgi_app)
+
 except Exception as e:
     from flask import Flask, Response
     app = Flask(__name__)
