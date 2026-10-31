@@ -67,6 +67,11 @@ def create_app():
     app.register_blueprint(contact_bp)
     app.register_blueprint(admin_bp)
 
+    @app.route('/api/index')
+    def api_index_root():
+        from routes.home_routes import index
+        return index()
+
     # Global HTTP Error Handlers
     @app.errorhandler(404)
     def page_not_found(e):
