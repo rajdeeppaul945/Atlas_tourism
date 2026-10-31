@@ -88,7 +88,8 @@ def create_app():
         tb_msg = traceback.format_exc()
         resp = make_response(render_template('errors/500.html'), 500)
         resp.headers['X-Error-Message'] = str(e)[:250]
-        resp.headers['X-Error-Trace'] = tb_msg.replace('\n', ' || ')[:400]
+        lines = traceback.format_exc().strip().splitlines()
+        resp.headers['X-Error-Trace'] = " || ".join(lines[-6:])[:400]
         return resp
 
     @app.errorhandler(403)
