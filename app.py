@@ -70,7 +70,11 @@ def create_app():
     # Global HTTP Error Handlers
     @app.errorhandler(404)
     def page_not_found(e):
-        return render_template('errors/404.html'), 404
+        from flask import request, make_response
+        debug_info = f"Requested URL: {request.url} | Path: {request.path} | PATH_INFO: {request.environ.get('PATH_INFO')} | SCRIPT_NAME: {request.environ.get('SCRIPT_NAME')}"
+        resp = make_response(render_template('errors/404.html'), 404)
+        resp.headers['X-Debug-Info'] = debug_info
+        return resp
 
     @app.errorhandler(500)
     def internal_server_error(e):
