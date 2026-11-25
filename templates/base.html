@@ -17,6 +17,60 @@
     <!-- Custom Application CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261030_1">
     {% block extra_css %}{% endblock %}
+    <!-- SEO Meta Tags for Google Search Ranking -->
+    <meta name="description" content="Atlas Tourism - Discover handcrafted holiday tour packages, sacred temple corridors, mist-clad hill stations, and tropical island getaways across India, Nepal, and beyond. Book your dream vacation with Atlas Tourism.">
+    <meta name="keywords" content="Atlas Tourism, atlas tourism assam, tour packages, travel agency dhubri, holiday tours india nepal, northeastern travel packages, northeast india tours">
+    <meta name="author" content="Atlas Tourism Ltd.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://atlas-tourism-five.vercel.app{{ request.path }}">
+
+    <!-- Open Graph / Social Sharing (WhatsApp, Facebook, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Atlas Tourism">
+    <meta property="og:url" content="https://atlas-tourism-five.vercel.app{{ request.path }}">
+    <meta property="og:title" content="Atlas Tourism - Discover Your Next Adventure">
+    <meta property="og:description" content="Handcrafted holiday tour packages, hotel bookings, and guided vacations with Atlas Tourism.">
+    <meta property="og:image" content="https://atlas-tourism-five.vercel.app{{ url_for('static', filename='images/logo.png') }}">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Atlas Tourism - Discover Your Next Adventure">
+    <meta name="twitter:description" content="Handcrafted holiday tour packages and curated vacations with Atlas Tourism.">
+    <meta name="twitter:image" content="https://atlas-tourism-five.vercel.app{{ url_for('static', filename='images/logo.png') }}">
+
+    <!-- Schema.org JSON-LD Structured Data for Google Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "TravelAgency",
+      "name": "Atlas Tourism",
+      "image": "https://atlas-tourism-five.vercel.app/static/images/logo.png",
+      "url": "https://atlas-tourism-five.vercel.app/",
+      "telephone": "+91 7739664552",
+      "email": "infoatlastourism000@gmail.com",
+      "description": "Atlas Tourism provides premium holiday packages, hotel accommodations, sightseeing itineraries, and travel bookings.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "First Floor, Paul Complex opposite of SBI Bank Dhubri Branch",
+        "addressLocality": "Dhubri",
+        "addressRegion": "Assam",
+        "postalCode": "783324",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 26.0207,
+        "longitude": 89.9749
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "opens": "09:00",
+        "closes": "20:00"
+      },
+      "priceRange": "₹₹"
+    }
+    </script>
 </head>
 <body>
 
